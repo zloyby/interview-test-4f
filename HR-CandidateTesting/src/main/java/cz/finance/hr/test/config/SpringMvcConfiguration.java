@@ -1,6 +1,9 @@
 package cz.finance.hr.test.config;
 
 import cz.finance.hr.test.core.rest.converter.InetAddressConverter;
+import cz.finance.hr.test.core.rest.filter.IpLimitFilter;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -16,4 +19,11 @@ public class SpringMvcConfiguration extends WebMvcConfigurerAdapter {
         registry.addConverter(new InetAddressConverter());
     }
 
+    @Bean
+    public FilterRegistrationBean<IpLimitFilter> loggingFilter() {
+        FilterRegistrationBean<IpLimitFilter> registrationBean = new FilterRegistrationBean<>();
+        registrationBean.setFilter(new IpLimitFilter());
+        registrationBean.addUrlPatterns("/city/*", "/country", "/country/*", "/ipaddress/*", "/region/*");
+        return registrationBean;
+    }
 }

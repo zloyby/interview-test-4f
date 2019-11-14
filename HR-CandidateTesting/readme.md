@@ -100,10 +100,3 @@ Zdrojová data CSV souborů byla stažena z adresy <http://lite.ip2location.com/
 Pokud byste se rozhodl/a některé požadavky ze zadání nesplnit a nebo je splnit jen částečně, popište nám prosím co konkrétně a proč.
 
 Děkujeme a přejeme vám hodně štěstí :-)
-
-Sample of CSV:
-```
-"34614272","34614527","CZ","Czech Republic","Praha, Hlavni mesto","Prague","50.088040","14.420760"
-...
-"85367296","85367551","SK","Slovakia","Nitriansky kraj","Zlate Moravce","48.385530","18.400630"
-```
