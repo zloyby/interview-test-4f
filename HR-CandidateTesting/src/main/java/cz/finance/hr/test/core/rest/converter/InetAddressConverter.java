@@ -18,5 +18,4 @@ public class InetAddressConverter implements Converter<String, InetAddress> {
             throw new IllegalArgumentException("Input string is not represent a valid IP address: " + source, e);
         }
     }
-
 }

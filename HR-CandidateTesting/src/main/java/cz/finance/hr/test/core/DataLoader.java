@@ -1,6 +1,11 @@
 package cz.finance.hr.test.core;
 
+import cz.finance.hr.test.core.util.CsvParser;
+import cz.finance.hr.test.core.util.GzipApache;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
+import java.util.Scanner;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -32,9 +37,25 @@ public class DataLoader implements ApplicationRunner {
      * | GPS longitude  | DOUBLE	    | City longitude. Default to capital city longitude if city is unknown.
      */
     @Override
-    public void run(ApplicationArguments args) throws Exception {
+    public void run(ApplicationArguments args) {
         log.info("Start filling database from csv");
         List<Resource> dataFileResources = applicationDataResourceProvider.getDataFileResources();
-        //TODO: parse csv and fill database
+        dataFileResources.forEach(this::readCsvFile);
+    }
+
+    private void readCsvFile(final Resource resource) {
+        try {
+            File tmpFile = File.createTempFile("decompressed-", null);
+            GzipApache.decompressGzip(resource.getFile(), tmpFile);
+            Scanner scanner = new Scanner(tmpFile);
+            while (scanner.hasNext()) {
+                List<String> line = CsvParser.parseLine(scanner.nextLine());
+                //TODO: fill database
+                log.info("[from= " + line.get(0) + ", to= " + line.get(1) + " , code=" + line.get(2) + "]");
+            }
+            scanner.close();
+        } catch (IOException ex) {
+            log.error("Can not read CSV file " + resource.getFilename());
+        }
     }
 }

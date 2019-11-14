@@ -24,16 +24,9 @@ public class ApplicationDataResourceProvider {
         this.resourceLoader = resourceLoader;
     }
 
-    public List<Resource> getDataFileResources() {
+    List<Resource> getDataFileResources() {
         return Arrays.asList(
                 resourceLoader.getResource("classpath:data/ip2location-lite-db5-cz.csv.gz"),
                 resourceLoader.getResource("classpath:data/ip2location-lite-db5-sk.csv.gz"));
     }
-
-/*
-"34614272","34614527","CZ","Czech Republic","Praha, Hlavni mesto","Prague","50.088040","14.420760"
-...
-"85367296","85367551","SK","Slovakia","Nitriansky kraj","Zlate Moravce","48.385530","18.400630"
-*/
-
 }

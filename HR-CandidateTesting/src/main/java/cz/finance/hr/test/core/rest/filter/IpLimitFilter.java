@@ -24,7 +24,7 @@ public class IpLimitFilter implements Filter {
 
         String remoteAddr = req.getRemoteAddr();
         log.info(remoteAddr);
-
+        //TODO: convert IP for check?!
         //TODO: check IP has too many requests
         boolean b = true;
         if (b) {
