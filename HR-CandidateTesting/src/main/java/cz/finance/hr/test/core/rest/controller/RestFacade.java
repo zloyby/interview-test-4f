@@ -6,11 +6,16 @@ import cz.finance.hr.test.api.model.IpAddressRange;
 import cz.finance.hr.test.api.model.Region;
 import cz.finance.hr.test.api.service.IPAddressService;
 import cz.finance.hr.test.api.service.LocationService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import java.net.InetAddress;
 import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -21,6 +26,8 @@ import org.springframework.web.bind.annotation.RestController;
  * RESTfull facade over {@link LocationService} and {@link IPAddressService}.
  */
 @RestController
+@Api(tags = "REST", description = "Operations")
+@Validated
 public class RestFacade implements LocationService, IPAddressService {
 
     private final LocationService locationService;
@@ -32,11 +39,17 @@ public class RestFacade implements LocationService, IPAddressService {
         this.ipAddressService = ipAddressService;
     }
 
-    //region LocationService
-
     @RequestMapping(value = "country", method = RequestMethod.GET)
     @Override
     @Nonnull
+    @ApiOperation(value = "Get all countries",
+            nickname = "getAllCountries")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success"),
+            @ApiResponse(code = 400, message = "Bad Request"),
+            @ApiResponse(code = 404, message = "Not Found"),
+            @ApiResponse(code = 429, message = "Too many requests"),
+            @ApiResponse(code = 500, message = "Failure")})
     public List<Country> getAllCountries() {
         return locationService.getAllCountries();
     }
@@ -44,6 +57,14 @@ public class RestFacade implements LocationService, IPAddressService {
     @RequestMapping(value = "country/{countryId}/region", method = RequestMethod.GET)
     @Override
     @Nonnull
+    @ApiOperation(value = "Get all regions in country",
+            nickname = "getAllCountryRegions")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success"),
+            @ApiResponse(code = 400, message = "Bad Request"),
+            @ApiResponse(code = 404, message = "Not Found"),
+            @ApiResponse(code = 429, message = "Too many requests"),
+            @ApiResponse(code = 500, message = "Failure")})
     public List<Region> getAllCountryRegions(@PathVariable("countryId") @Nonnull Long countryId) {
         return locationService.getAllCountryRegions(countryId);
     }
@@ -51,6 +72,14 @@ public class RestFacade implements LocationService, IPAddressService {
     @RequestMapping(value = "region/{regionId}/city", method = RequestMethod.GET)
     @Override
     @Nonnull
+    @ApiOperation(value = "Get all cities in region",
+            nickname = "getAllRegionCities")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success"),
+            @ApiResponse(code = 400, message = "Bad Request"),
+            @ApiResponse(code = 404, message = "Not Found"),
+            @ApiResponse(code = 429, message = "Too many requests"),
+            @ApiResponse(code = 500, message = "Failure")})
     public List<City> getAllRegionCities(@PathVariable("regionId") @Nonnull Long regionId) {
         return locationService.getAllRegionCities(regionId);
     }
@@ -58,18 +87,29 @@ public class RestFacade implements LocationService, IPAddressService {
     @RequestMapping(value = "country/{countryId}/city", method = RequestMethod.GET)
     @Override
     @Nonnull
+    @ApiOperation(value = "Get all cities in country",
+            nickname = "getAllCountryCities")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success"),
+            @ApiResponse(code = 400, message = "Bad Request"),
+            @ApiResponse(code = 404, message = "Not Found"),
+            @ApiResponse(code = 429, message = "Too many requests"),
+            @ApiResponse(code = 500, message = "Failure")})
     public List<City> getAllCountryCities(@PathVariable("countryId") @Nonnull Long countryId) {
         return locationService.getAllCountryCities(countryId);
     }
 
-    //endregion
-
-
-    //region IPAddressService
-
     @RequestMapping(value = "city/{cityId}/ipaddress", method = RequestMethod.GET)
     @Override
     @Nonnull
+    @ApiOperation(value = "Get all IP ranges for city",
+            nickname = "getAllCityIPAddressRanges")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success"),
+            @ApiResponse(code = 400, message = "Bad Request"),
+            @ApiResponse(code = 404, message = "Not Found"),
+            @ApiResponse(code = 429, message = "Too many requests"),
+            @ApiResponse(code = 500, message = "Failure")})
     public List<IpAddressRange> getAllCityIPAddressRanges(@PathVariable("cityId") @Nonnull Long cityId) {
         return ipAddressService.getAllCityIPAddressRanges(cityId);
     }
@@ -77,9 +117,16 @@ public class RestFacade implements LocationService, IPAddressService {
     @RequestMapping(value = "ipaddress/guess", method = RequestMethod.GET)
     @Override
     @Nullable
+    @ApiOperation(value = "Get city by IP",
+            nickname = "guessCityForIPAddress",
+            response = City.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success", response = City.class),
+            @ApiResponse(code = 400, message = "Bad Request"),
+            @ApiResponse(code = 404, message = "Not Found"),
+            @ApiResponse(code = 429, message = "Too many requests"),
+            @ApiResponse(code = 500, message = "Failure")})
     public City guessCityForIPAddress(@RequestParam("ip") @Nonnull InetAddress ipAddress) {
         return ipAddressService.guessCityForIPAddress(ipAddress);
     }
-
-    //endregion
 }

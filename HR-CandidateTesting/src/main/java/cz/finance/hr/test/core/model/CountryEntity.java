@@ -1,6 +1,5 @@
 package cz.finance.hr.test.core.model;
 
-import javax.annotation.Nonnull;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -20,22 +19,13 @@ import lombok.NoArgsConstructor;
 @Table(name = "Country")
 public class CountryEntity {
 
-    /**
-     * Unique country ID (generated).
-     */
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    /**
-     * Unique ISO country code.
-     */
     @Column
     private String code;
 
-    /**
-     * Country name.
-     */
     @Column
     private String name;
 }

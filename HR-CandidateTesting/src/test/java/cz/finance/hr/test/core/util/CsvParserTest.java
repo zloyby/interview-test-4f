@@ -22,7 +22,7 @@ public class CsvParserTest {
     }
 
     @Test
-    public void test_no_quote_but_double_quotes_in_column() throws Exception {
+    public void test_no_quote_but_double_quotes_in_column() {
         String line = "10,AU,Aus\"\"tralia";
 
         List<String> result = CsvParser.parseLine(line);

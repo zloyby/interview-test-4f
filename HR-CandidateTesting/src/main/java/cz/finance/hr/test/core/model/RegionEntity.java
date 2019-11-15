@@ -1,9 +1,8 @@
 package cz.finance.hr.test.core.model;
 
-import javax.annotation.Nonnull;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -14,6 +13,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 @Data
 @Builder
@@ -23,23 +24,15 @@ import lombok.NoArgsConstructor;
 @Table(name = "Region")
 public class RegionEntity {
 
-    /**
-     * Unique region ID (generated).
-     */
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    /**
-     * Region name.
-     */
     @Column
     private String name;
 
-    /**
-     * Reference to {@link CountryEntity#getId()}.
-     */
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @Cascade({CascadeType.SAVE_UPDATE, CascadeType.DELETE})
     @JoinColumn(name = "country_id")
-    private CountryEntity countryId;
+    private CountryEntity country;
 }
