@@ -28,7 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 @Slf4j
 @Transactional
-public class DataLoader implements ApplicationRunner {
+public class DataLoaderRunner implements ApplicationRunner {
 
     private final ApplicationDataResourceProvider applicationDataResourceProvider;
     private final IpAddressRangeRepository ipAddressRangeRepository;
@@ -38,12 +38,12 @@ public class DataLoader implements ApplicationRunner {
     private final CountryRepository countryRepository;
 
     @Autowired
-    public DataLoader(ApplicationDataResourceProvider applicationDataResourceProvider,
-                      IpAddressRangeRepository ipAddressRangeRepository,
-                      GpsCoordinatesRepository gpsCoordinatesRepository,
-                      CityRepository cityRepository,
-                      RegionRepository regionRepository,
-                      CountryRepository countryRepository) {
+    public DataLoaderRunner(ApplicationDataResourceProvider applicationDataResourceProvider,
+                            IpAddressRangeRepository ipAddressRangeRepository,
+                            GpsCoordinatesRepository gpsCoordinatesRepository,
+                            CityRepository cityRepository,
+                            RegionRepository regionRepository,
+                            CountryRepository countryRepository) {
         this.applicationDataResourceProvider = applicationDataResourceProvider;
         this.ipAddressRangeRepository = ipAddressRangeRepository;
         this.gpsCoordinatesRepository = gpsCoordinatesRepository;

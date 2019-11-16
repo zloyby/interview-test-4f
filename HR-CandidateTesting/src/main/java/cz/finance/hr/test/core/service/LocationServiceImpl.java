@@ -8,11 +8,16 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Primary
 @Service
+@Transactional
+@CacheConfig(cacheNames = {"location"})
 public class LocationServiceImpl implements LocationService {
 
     @Autowired
@@ -20,6 +25,8 @@ public class LocationServiceImpl implements LocationService {
 
     @Nonnull
     @Override
+    @Cacheable
+    @Transactional(readOnly = true)
     public List<Country> getAllCountries() {
 
         //TODO implement me!
@@ -28,6 +35,8 @@ public class LocationServiceImpl implements LocationService {
 
     @Nonnull
     @Override
+    @Cacheable
+    @Transactional(readOnly = true)
     public List<Region> getAllCountryRegions(@Nonnull Long countryId) {
         //TODO implement me!
         return null;
@@ -35,6 +44,8 @@ public class LocationServiceImpl implements LocationService {
 
     @Nonnull
     @Override
+    @Cacheable
+    @Transactional(readOnly = true)
     public List<City> getAllRegionCities(@Nonnull Long regionId) {
         //TODO implement me!
         return null;
@@ -42,6 +53,8 @@ public class LocationServiceImpl implements LocationService {
 
     @Nonnull
     @Override
+    @Cacheable
+    @Transactional(readOnly = true)
     public List<City> getAllCountryCities(@Nonnull Long countryId) {
         //TODO implement me!
         return null;
