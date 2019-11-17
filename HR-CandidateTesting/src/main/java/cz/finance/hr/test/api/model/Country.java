@@ -1,43 +1,55 @@
 package cz.finance.hr.test.api.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import javax.annotation.Nonnull;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
+@AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Country {
 
-	/** Unique country ID (generated). */
-	@Nonnull
-	Long id;
+    /**
+     * Unique country ID (generated).
+     */
+    @Nonnull
+    Long id;
 
-	/** Unique ISO country code. */
-	@Nonnull
-	String code;
+    /**
+     * Unique ISO country code.
+     */
+    @Nonnull
+    String code;
 
-	/** Country name. */
-	@Nonnull
-	String name;
+    /**
+     * Country name.
+     */
+    @Nonnull
+    String name;
 
-	public Long getId() {
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public String getCode() {
-		return code;
-	}
+    public String getCode() {
+        return code;
+    }
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
 }

@@ -131,7 +131,7 @@ public class DataLoaderRunner implements ApplicationRunner {
                         .build();
                 ipAddressRangeRepository.save(ipRangeEntity);
 
-                log.info("[from= " + line.get(0) + ", to= " + line.get(1) + " , code=" + line.get(2) + "]");
+                log.info("[from=" + line.get(0) + ", to=" + line.get(1) + " , code=" + line.get(2) + "]");
             }
             scanner.close();
         } catch (IOException ex) {

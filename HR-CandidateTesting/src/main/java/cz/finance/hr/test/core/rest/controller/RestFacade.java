@@ -8,6 +8,7 @@ import cz.finance.hr.test.api.service.IPAddressService;
 import cz.finance.hr.test.api.service.LocationService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import java.net.InetAddress;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Api(tags = "REST", description = "Operations")
 @Validated
+//TODO: add pagination
 public class RestFacade implements LocationService, IPAddressService {
 
     private final LocationService locationService;
@@ -65,7 +67,8 @@ public class RestFacade implements LocationService, IPAddressService {
             @ApiResponse(code = 404, message = "Not Found"),
             @ApiResponse(code = 429, message = "Too many requests"),
             @ApiResponse(code = 500, message = "Failure")})
-    public List<Region> getAllCountryRegions(@PathVariable("countryId") @Nonnull Long countryId) {
+    public List<Region> getAllCountryRegions(
+            @PathVariable("countryId") @ApiParam(example = "1", required = true) @Nonnull Long countryId) {
         return locationService.getAllCountryRegions(countryId);
     }
 
@@ -80,7 +83,8 @@ public class RestFacade implements LocationService, IPAddressService {
             @ApiResponse(code = 404, message = "Not Found"),
             @ApiResponse(code = 429, message = "Too many requests"),
             @ApiResponse(code = 500, message = "Failure")})
-    public List<City> getAllRegionCities(@PathVariable("regionId") @Nonnull Long regionId) {
+    public List<City> getAllRegionCities(
+            @PathVariable("regionId") @ApiParam(example = "2", required = true) @Nonnull Long regionId) {
         return locationService.getAllRegionCities(regionId);
     }
 
@@ -95,7 +99,8 @@ public class RestFacade implements LocationService, IPAddressService {
             @ApiResponse(code = 404, message = "Not Found"),
             @ApiResponse(code = 429, message = "Too many requests"),
             @ApiResponse(code = 500, message = "Failure")})
-    public List<City> getAllCountryCities(@PathVariable("countryId") @Nonnull Long countryId) {
+    public List<City> getAllCountryCities(
+            @PathVariable("countryId") @ApiParam(example = "1", required = true) @Nonnull Long countryId) {
         return locationService.getAllCountryCities(countryId);
     }
 
@@ -110,7 +115,8 @@ public class RestFacade implements LocationService, IPAddressService {
             @ApiResponse(code = 404, message = "Not Found"),
             @ApiResponse(code = 429, message = "Too many requests"),
             @ApiResponse(code = 500, message = "Failure")})
-    public List<IpAddressRange> getAllCityIPAddressRanges(@PathVariable("cityId") @Nonnull Long cityId) {
+    public List<IpAddressRange> getAllCityIPAddressRanges(
+            @PathVariable("cityId") @ApiParam(example = "3", required = true) @Nonnull Long cityId) {
         return ipAddressService.getAllCityIPAddressRanges(cityId);
     }
 
@@ -126,7 +132,8 @@ public class RestFacade implements LocationService, IPAddressService {
             @ApiResponse(code = 404, message = "Not Found"),
             @ApiResponse(code = 429, message = "Too many requests"),
             @ApiResponse(code = 500, message = "Failure")})
-    public City guessCityForIPAddress(@RequestParam("ip") @Nonnull InetAddress ipAddress) {
+    public City guessCityForIPAddress(
+            @RequestParam("ip") @ApiParam(example = "2.16.44.1", required = true) @Nonnull InetAddress ipAddress) {
         return ipAddressService.guessCityForIPAddress(ipAddress);
     }
 }

@@ -1,22 +1,36 @@
 package cz.finance.hr.test.api.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import javax.annotation.Nonnull;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
+@AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class City {
 
-	/** Unique city ID (generated). */
+	/**
+	 * Unique city ID (generated).
+	 */
 	@Nonnull
 	Long id;
 
-	/** City name. */
+	/**
+	 * City name.
+	 */
 	@Nonnull
 	String name;
 
-	/** GPS coordinates of the city center. */
+	/**
+	 * GPS coordinates of the city center.
+	 */
 	@Nonnull
 	GpsCoordinates gpsCoordinates;
 
-	/** Reference to {@link Region#getId()}. */
+	/**
+	 * Reference to {@link Region#getId()}.
+	 */
 	@Nonnull
 	Long regionId;
 
