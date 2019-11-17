@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 @Slf4j
 @Transactional
+//@Profile("!test")
 public class DataLoaderRunner implements ApplicationRunner {
 
     private final ApplicationDataResourceProvider applicationDataResourceProvider;

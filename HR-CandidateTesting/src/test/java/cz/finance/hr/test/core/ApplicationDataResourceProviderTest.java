@@ -35,5 +35,4 @@ public class ApplicationDataResourceProviderTest {
             assertThat("Size of the file " + file, file.length(), not(equalTo(0)));
         }
     }
-
 }
