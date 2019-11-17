@@ -15,7 +15,6 @@ import cz.finance.hr.test.core.util.ModelMapperUtils;
 import java.util.List;
 import javax.annotation.Nonnull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
@@ -24,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Primary
 @Service
 @Transactional
-@CacheConfig(cacheNames = {"location"})
 public class LocationServiceImpl implements LocationService {
 
     private final CityRepository cityRepository;
@@ -40,7 +38,7 @@ public class LocationServiceImpl implements LocationService {
 
     @Nonnull
     @Override
-    @Cacheable
+    @Cacheable("Country")
     @Transactional(readOnly = true)
     public List<Country> getAllCountries() {
         Iterable<CountryEntity> entities = countryRepository.findAll();
@@ -49,7 +47,7 @@ public class LocationServiceImpl implements LocationService {
 
     @Nonnull
     @Override
-    @Cacheable
+    @Cacheable("RegionOfCountry")
     @Transactional(readOnly = true)
     public List<Region> getAllCountryRegions(@Nonnull Long countryId) {
         List<RegionEntity> entities = regionRepository.findAllByCountryId(countryId);
@@ -58,7 +56,7 @@ public class LocationServiceImpl implements LocationService {
 
     @Nonnull
     @Override
-    @Cacheable
+    @Cacheable("CityOfRegion")
     @Transactional(readOnly = true)
     public List<City> getAllRegionCities(@Nonnull Long regionId) {
         List<CityEntity> entities = cityRepository.findAllByRegionId(regionId);
@@ -67,7 +65,7 @@ public class LocationServiceImpl implements LocationService {
 
     @Nonnull
     @Override
-    @Cacheable
+    @Cacheable("CityOfCounty")
     @Transactional(readOnly = true)
     public List<City> getAllCountryCities(@Nonnull Long countryId) {
         List<CityEntity> entities = cityRepository.findAllByCountryId(countryId);

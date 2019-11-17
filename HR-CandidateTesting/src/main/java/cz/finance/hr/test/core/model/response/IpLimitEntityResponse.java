@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class IpLimitResponse {
+public class IpLimitEntityResponse {
     private Long countCountries;
     private Long countRegions;
     private Long countCities;

@@ -18,7 +18,7 @@ import static org.junit.Assert.assertTrue;
 public class ApplicationDataResourceProviderTest {
 
     @Autowired
-    private cz.finance.hr.test.core.ApplicationDataResourceProvider dataResourceProvider;
+    private ApplicationDataResourceProvider dataResourceProvider;
 
     @Test
     public void providedDataFileResourcesAreReadable() throws IOException {

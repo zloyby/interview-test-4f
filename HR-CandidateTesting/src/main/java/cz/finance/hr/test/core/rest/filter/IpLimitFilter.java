@@ -64,8 +64,9 @@ public class IpLimitFilter implements Filter {
         if (limits.getAllowed()) {
             filterChain.doFilter(servletRequest, servletResponse);
         } else {
-            // If you want to return just status without body:
+            // If you really want to return just status without body:
             res.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
+
             // Return usual spring error:
             //res.sendError(HttpStatus.TOO_MANY_REQUESTS.value(), "Too Many Requests");
         }

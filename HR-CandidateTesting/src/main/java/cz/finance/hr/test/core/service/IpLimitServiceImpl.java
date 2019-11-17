@@ -5,9 +5,10 @@ import cz.finance.hr.test.core.model.CityEntity;
 import cz.finance.hr.test.core.model.GpsCoordinatesEntity;
 import cz.finance.hr.test.core.model.IpAddressRangeEntity;
 import cz.finance.hr.test.core.model.RequestsTransactionEntity;
-import cz.finance.hr.test.core.model.response.IpLimitResponse;
+import cz.finance.hr.test.core.model.response.IpLimitEntityResponse;
 import cz.finance.hr.test.core.repository.IpAddressRangeRepository;
 import cz.finance.hr.test.core.repository.RequestsTransactionRepository;
+import cz.finance.hr.test.core.rest.controller.response.IpLimitResponse;
 import cz.finance.hr.test.core.util.InetAddressToLongConverter;
 import java.net.InetAddress;
 import java.util.Calendar;
@@ -29,13 +30,13 @@ public class IpLimitServiceImpl {
         this.requestsTransactionRepository = requestsTransactionRepository;
     }
 
-    public cz.finance.hr.test.core.rest.controller.response.IpLimitResponse resolveIpLimits(InetAddress ipAddress, IpLimitProperties ipLimitProperties) {
+    public IpLimitResponse resolveIpLimits(InetAddress ipAddress, IpLimitProperties ipLimitProperties) {
         Long ipNumber = InetAddressToLongConverter.ipToLong(ipAddress);
         Optional<IpAddressRangeEntity> ipInsideRangeOptional = ipAddressRangeRepository.findIpInsideRangeWithFetch(ipNumber);
 
         if (!ipInsideRangeOptional.isPresent()) {
             // Allow for unknown location
-            return cz.finance.hr.test.core.rest.controller.response.IpLimitResponse.builder().ip(ipNumber).allowed(true).build();
+            return IpLimitResponse.builder().ip(ipNumber).allowed(true).build();
         } else {
             IpAddressRangeEntity ipAddressRangeEntity = ipInsideRangeOptional.get();
             GpsCoordinatesEntity gpsCoordinatesEntity = ipAddressRangeEntity.getGpsCoordinatesEntity();
@@ -50,14 +51,14 @@ public class IpLimitServiceImpl {
 
             Calendar timeNowMinusLimit = Calendar.getInstance();
             timeNowMinusLimit.add(Calendar.MINUTE, -ipLimitProperties.getLimitTime());
-            IpLimitResponse summaryResponse =
+            IpLimitEntityResponse summaryResponse =
                     requestsTransactionRepository.findLimitsByLast(countryId, regionId, cityId, timeNowMinusLimit.getTimeInMillis());
 
             boolean isDeclined = summaryResponse.getCountCountries() > ipLimitProperties.getLimitForCountry()
                     || summaryResponse.getCountRegions() > ipLimitProperties.getLimitForRegion()
                     || summaryResponse.getCountCities() > ipLimitProperties.getLimitForCity();
 
-            return cz.finance.hr.test.core.rest.controller.response.IpLimitResponse.builder()
+            return IpLimitResponse.builder()
                     .ip(ipNumber)
                     .cityId(cityId)
                     .regionId(regionId)

@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
@@ -27,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Primary
 @Service
 @Transactional
-@CacheConfig(cacheNames = {"ipaddress"})
 public class IPAddressServiceImpl implements IPAddressService {
 
     private final IpAddressRangeRepository ipAddressRangeRepository;
@@ -39,7 +37,7 @@ public class IPAddressServiceImpl implements IPAddressService {
 
     @Nonnull
     @Override
-    @Cacheable
+    @Cacheable("IpAddressRange")
     @Transactional(readOnly = true)
     public List<IpAddressRange> getAllCityIPAddressRanges(@Nonnull Long cityId) {
         List<IpAddressRangeEntity> ranges = ipAddressRangeRepository.findAllByCityId(cityId);
@@ -50,7 +48,7 @@ public class IPAddressServiceImpl implements IPAddressService {
 
     @Nullable
     @Override
-    @Cacheable
+    @Cacheable("CityByIpAddress")
     @Transactional(readOnly = true)
     public City guessCityForIPAddress(@Nonnull InetAddress ipAddress) {
         Long ipNumber = InetAddressToLongConverter.ipToLong(ipAddress);
