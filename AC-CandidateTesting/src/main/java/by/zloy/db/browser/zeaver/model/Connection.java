@@ -1,19 +1,10 @@
 package by.zloy.db.browser.zeaver.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Index;
-import javax.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+
+import javax.persistence.*;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -45,4 +36,20 @@ public class Connection extends AbstractBaseEntity {
 
     @Column
     private String name;
+
+    @Column
+    private String host;
+
+    @Column
+    private String port;
+
+    @Column
+    private String database;
+
+    @Column
+    private String user;
+
+    //TODO: encode password
+    @Column
+    private String password;
 }

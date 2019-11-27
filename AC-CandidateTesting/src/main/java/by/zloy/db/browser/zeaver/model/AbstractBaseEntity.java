@@ -1,12 +1,13 @@
 package by.zloy.db.browser.zeaver.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.domain.Persistable;
+
+import javax.persistence.MappedSuperclass;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 
 @Getter
 @Setter

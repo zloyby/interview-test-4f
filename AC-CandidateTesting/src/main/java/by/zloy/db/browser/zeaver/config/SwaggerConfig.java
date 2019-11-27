@@ -31,7 +31,7 @@ public class SwaggerConfig implements WebMvcConfigurer {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(getApiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("by.zloy.db.browser.zeaver"))
+                .apis(RequestHandlerSelectors.basePackage("by.zloy.db.browser.zeaver.controller"))
                 .paths(PathSelectors.any())
                 .build();
     }
