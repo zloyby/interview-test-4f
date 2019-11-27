@@ -1,8 +1,8 @@
-package by.zloy.db.browser.zeaver;
-
-import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
+package by.zloy.db.browser.zeaver.dbcp;
 
 import java.util.Map;
+import javax.sql.DataSource;
+import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 
 public class RoutingDataSource extends AbstractRoutingDataSource {
 
@@ -11,8 +11,11 @@ public class RoutingDataSource extends AbstractRoutingDataSource {
         return ConnectionIdHolder.getConnectionId();
     }
 
+    public void setDefaultDataSource(DataSource dataSource) {
+        setDefaultTargetDataSource(dataSource);
+    }
+
     public void setDataSources(Map<Object, Object> dataSources) {
-        setDefaultTargetDataSource(dataSources.get(-1L));
         setTargetDataSources(dataSources);
     }
 }

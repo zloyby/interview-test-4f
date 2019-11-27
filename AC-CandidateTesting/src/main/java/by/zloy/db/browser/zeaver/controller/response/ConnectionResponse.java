@@ -18,7 +18,7 @@ public class ConnectionResponse {
     private String port;
     private String database;
     private String user;
-    //TODO: hide password?
+    //TODO: encrypt and hide password?
     private String password;
     private Long created;
     private Long updated;

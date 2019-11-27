@@ -1,11 +1,10 @@
-package by.zloy.db.browser.zeaver;
+package by.zloy.db.browser.zeaver.dbcp;
 
+import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
-
-import java.util.Map;
 
 @Component
 @Data

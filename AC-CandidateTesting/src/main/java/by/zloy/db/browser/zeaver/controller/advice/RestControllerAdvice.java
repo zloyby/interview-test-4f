@@ -3,6 +3,7 @@ package by.zloy.db.browser.zeaver.controller.advice;
 import by.zloy.db.browser.zeaver.controller.response.ErrorResponse;
 import by.zloy.db.browser.zeaver.exception.NotFoundException;
 import by.zloy.db.browser.zeaver.exception.ZeaverException;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -14,8 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-
-import java.util.Optional;
 
 @Slf4j
 @Order(Ordered.HIGHEST_PRECEDENCE)

@@ -2,12 +2,11 @@ package by.zloy.db.browser.zeaver.controller.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.AllArgsConstructor;
-import lombok.Value;
-
 import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Value;
 
 @Value
 @AllArgsConstructor
