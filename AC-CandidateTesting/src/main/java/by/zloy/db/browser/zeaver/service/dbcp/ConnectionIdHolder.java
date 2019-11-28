@@ -1,6 +1,7 @@
-package by.zloy.db.browser.zeaver.dbcp;
+package by.zloy.db.browser.zeaver.service.dbcp;
 
-import by.zloy.db.browser.zeaver.exception.NotFoundException;
+import by.zloy.db.browser.zeaver.exception.DatabaseConnectionException;
+
 import java.util.Optional;
 
 public class ConnectionIdHolder {
@@ -9,7 +10,7 @@ public class ConnectionIdHolder {
 
     static Long getConnectionId() {
         final Long id = contextHolder.get();
-        return Optional.ofNullable(id).orElseThrow(NotFoundException::new);
+        return Optional.ofNullable(id).orElseThrow(DatabaseConnectionException::new);
     }
 
     public static void setConnectionId(Long id) {

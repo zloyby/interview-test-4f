@@ -1,12 +1,12 @@
 package by.zloy.db.browser.zeaver.service;
 
 import by.zloy.db.browser.zeaver.controller.request.ConnectionRequest;
-import by.zloy.db.browser.zeaver.controller.response.ConnectionResponse;
 import by.zloy.db.browser.zeaver.exception.NotFoundException;
 import by.zloy.db.browser.zeaver.model.Connection;
+import by.zloy.db.browser.zeaver.model.Driver;
 import by.zloy.db.browser.zeaver.repository.ConnectionRepository;
+import by.zloy.db.browser.zeaver.service.dbcp.DataSourceBeanFactory;
 import by.zloy.db.browser.zeaver.util.ModelMapperUtils;
-import javax.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -17,16 +17,21 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.PostConstruct;
+
 @Service
 @Slf4j
 @Transactional
 public class ConnectionService {
 
     private final ConnectionRepository connectionRepository;
+    private final DataSourceBeanFactory dataSourceBeanFactory;
 
     @Autowired
-    public ConnectionService(ConnectionRepository connectionRepository) {
+    public ConnectionService(ConnectionRepository connectionRepository,
+                             DataSourceBeanFactory dataSourceBeanFactory) {
         this.connectionRepository = connectionRepository;
+        this.dataSourceBeanFactory = dataSourceBeanFactory;
     }
 
     @PostConstruct
@@ -34,56 +39,61 @@ public class ConnectionService {
         log.trace("Init:[{}]", this.getClass().getSimpleName());
     }
 
-    //TODO: add cache with pagination
-    @Transactional(readOnly = true)
-    public Page<ConnectionResponse> getAllConnections(Pageable pageable) {
-        log.info("get all Connections {}-{}", pageable.getPageNumber(), pageable.getPageSize());
-        final Page<Connection> connections = connectionRepository.findAll(pageable);
+    public Connection createConnection(ConnectionRequest connectionRequest) {
+        log.info("create Connection {}", connectionRequest);
 
-        log.info("found {}", connections.getTotalElements());
-        return ModelMapperUtils.mapAllPages(connections, ConnectionResponse.class);
+        final Connection mapped = ModelMapperUtils.map(connectionRequest, Connection.class);
+        final Connection saved = connectionRepository.save(mapped);
+
+        dataSourceBeanFactory.addIfNotExist(saved.getId(), saved);
+
+        return saved;
     }
 
-    public ConnectionResponse createConnection(ConnectionRequest connectionRequest) {
-        log.info("create Connection {}", connectionRequest);
-        final Connection connection = ModelMapperUtils.map(connectionRequest, Connection.class);
+    //TODO: add cache with pagination
+    @Transactional(readOnly = true)
+    public Page<Connection> getAllConnections(Pageable pageable) {
+        log.info("get all Connections {}-{}", pageable.getPageNumber(), pageable.getPageSize());
 
-        final Connection saved = connectionRepository.save(connection);
-        log.info("saved Connection {}", saved);
-
-        return ModelMapperUtils.map(saved, ConnectionResponse.class);
+        return connectionRepository.findAll(pageable);
     }
 
     @Cacheable(value = "connections", key = "#id")
     @Transactional(readOnly = true)
-    public ConnectionResponse getConnection(Long id) {
+    public Connection getConnection(Long id) {
         log.info("get Connection {}", id);
-        final Connection connection = connectionRepository.findById(id).orElseThrow(NotFoundException::new);
 
-        log.info("founded Connection {}", connection);
-        return ModelMapperUtils.map(connection, ConnectionResponse.class);
+        return connectionRepository.findById(id).orElseThrow(NotFoundException::new);
     }
 
     @CachePut(value = "connections", key = "#id")
-    public ConnectionResponse updateConnection(Long id, ConnectionRequest connectionRequest) {
+    public Connection updateConnection(Long id, ConnectionRequest connectionRequest) {
         log.info("update Connection {}", id);
-        final Connection connection = connectionRepository.findById(id).orElseThrow(NotFoundException::new);
 
-        connection.setName(connectionRequest.getName());
-        connection.setDatabase(connectionRequest.getDatabase());
-        connection.setHost(connectionRequest.getHost());
-        connection.setPort(connectionRequest.getPort());
-        connection.setUser(connectionRequest.getUser());
-        connection.setPassword(connectionRequest.getPassword());
-        final Connection saved = connectionRepository.save(connection);
-        log.info("updated Connection {}", saved);
+        final Connection found = connectionRepository.findById(id).orElseThrow(NotFoundException::new);
 
-        return ModelMapperUtils.map(saved, ConnectionResponse.class);
+        dataSourceBeanFactory.deleteIfExist(id);
+
+        found.setName(connectionRequest.getName());
+        found.setDriver(Driver.valueOf(connectionRequest.getDriver()));
+        found.setDatabase(connectionRequest.getDatabase());
+        found.setHost(connectionRequest.getHost());
+        found.setPort(connectionRequest.getPort());
+        found.setUser(connectionRequest.getUser());
+        found.setPassword(connectionRequest.getPassword());
+        found.setParameters(connectionRequest.getParameters());
+        final Connection saved = connectionRepository.save(found);
+
+        dataSourceBeanFactory.addIfNotExist(saved.getId(), saved);
+
+        return saved;
     }
 
     @CacheEvict(value = "connections", key = "#id")
     public void deleteConnection(Long id) {
         log.info("delete Connection {}", id);
+
+        dataSourceBeanFactory.deleteIfExist(id);
         connectionRepository.deleteById(id);
     }
 }

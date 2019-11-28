@@ -35,6 +35,7 @@ dependencies {
 
     compile group: 'com.h2database', name: 'h2'
     compile group: 'mysql', name: 'mysql-connector-java'
+    compile group: 'org.postgresql', name: 'postgresql'
 
     compileOnly 'org.projectlombok:lombok:1.18.10'
     annotationProcessor 'org.projectlombok:lombok:1.18.10'

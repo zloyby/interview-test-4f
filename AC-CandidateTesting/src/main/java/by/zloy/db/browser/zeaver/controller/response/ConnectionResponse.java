@@ -1,5 +1,6 @@
 package by.zloy.db.browser.zeaver.controller.response;
 
+import by.zloy.db.browser.zeaver.model.Driver;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
@@ -14,12 +15,12 @@ import lombok.NoArgsConstructor;
 public class ConnectionResponse {
     private Long id;
     private String name;
+    private Driver driver;
     private String host;
     private String port;
     private String database;
     private String user;
-    //TODO: encrypt and hide password?
-    private String password;
+    private String parameters;
     private Long created;
     private Long updated;
 }

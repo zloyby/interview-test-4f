@@ -1,14 +1,11 @@
 package by.zloy.db.browser.zeaver.controller;
 
-import by.zloy.db.browser.zeaver.controller.response.ConnectionResponse;
 import by.zloy.db.browser.zeaver.controller.response.SingleValueResponse;
+import by.zloy.db.browser.zeaver.model.Connection;
 import by.zloy.db.browser.zeaver.service.ConnectionService;
 import by.zloy.db.browser.zeaver.service.JdbcService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import by.zloy.db.browser.zeaver.service.dbcp.DataSourceBeanFactory;
+import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -26,13 +23,17 @@ import org.springframework.web.bind.annotation.RestController;
 @Validated
 public class JdbcController {
 
-    final private ConnectionService connectionService;
-    final private JdbcService jdbcService;
+    private final ConnectionService connectionService;
+    private final JdbcService jdbcService;
+    private final DataSourceBeanFactory dataSourceBeanFactory;
 
     @Autowired
-    public JdbcController(ConnectionService connectionService, JdbcService jdbcService) {
+    public JdbcController(ConnectionService connectionService,
+                          JdbcService jdbcService,
+                          DataSourceBeanFactory dataSourceBeanFactory) {
         this.connectionService = connectionService;
         this.jdbcService = jdbcService;
+        this.dataSourceBeanFactory = dataSourceBeanFactory;
     }
 
     @GetMapping(value = "/connections/{id}")
@@ -46,11 +47,8 @@ public class JdbcController {
     public ResponseEntity<SingleValueResponse<Boolean>> testConnection(
             @ApiParam(value = "Id of connection", required = true, example = "1") @PathVariable("id") Long id
     ) {
-        //Just check this id is valid:
-        ConnectionResponse connection = connectionService.getConnection(id);
-        String database = connection.getDatabase();
-        log.info("Create connection url from {}", database);
-        //TODO: create connection url
+        final Connection connection = connectionService.getConnection(id);
+        dataSourceBeanFactory.addIfNotExist(id, connection);
 
         Boolean isConnected = jdbcService.test(id);
 

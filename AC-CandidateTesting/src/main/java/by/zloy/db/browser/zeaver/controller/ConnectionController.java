@@ -3,28 +3,19 @@ package by.zloy.db.browser.zeaver.controller;
 import by.zloy.db.browser.zeaver.controller.request.ConnectionRequest;
 import by.zloy.db.browser.zeaver.controller.request.Pagination;
 import by.zloy.db.browser.zeaver.controller.response.ConnectionResponse;
+import by.zloy.db.browser.zeaver.model.Connection;
 import by.zloy.db.browser.zeaver.service.ConnectionService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
-import javax.validation.Valid;
+import by.zloy.db.browser.zeaver.util.ModelMapperUtils;
+import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController("v1.ConnectionController")
 @RequestMapping(value = "/api/v1/connections", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -50,7 +41,9 @@ public class ConnectionController {
     public ResponseEntity<Page<ConnectionResponse>> getAllConnections(
             @ModelAttribute @Validated Pagination pagination
     ) {
-        return ResponseEntity.ok(connectionService.getAllConnections(pagination.toPageRequest()));
+        final Page<Connection> connections = connectionService.getAllConnections(pagination.toPageRequest());
+        log.info("found {}", connections.getTotalElements());
+        return ResponseEntity.ok(ModelMapperUtils.mapAllPages(connections, ConnectionResponse.class));
     }
 
     @PostMapping()
@@ -63,7 +56,9 @@ public class ConnectionController {
     public ResponseEntity<ConnectionResponse> createConnection(
             @ApiParam(required = true) @RequestBody @Valid ConnectionRequest connectionRequest
     ) {
-        return ResponseEntity.ok(connectionService.createConnection(connectionRequest));
+        final Connection saved = connectionService.createConnection(connectionRequest);
+        log.info("save Connection {}", saved.getName());
+        return ResponseEntity.ok(ModelMapperUtils.map(saved, ConnectionResponse.class));
     }
 
     @GetMapping(value = "/{id}")
@@ -77,8 +72,9 @@ public class ConnectionController {
     public ResponseEntity<ConnectionResponse> getConnection(
             @ApiParam(value = "Id of connection", required = true, example = "1") @PathVariable("id") Long id
     ) {
-        final ConnectionResponse connection = connectionService.getConnection(id);
-        return ResponseEntity.ok(connection);
+        final Connection connection = connectionService.getConnection(id);
+        log.info("found Connection {}", connection.getName());
+        return ResponseEntity.ok(ModelMapperUtils.map(connection, ConnectionResponse.class));
     }
 
     @PutMapping(value = "/{id}")
@@ -93,7 +89,9 @@ public class ConnectionController {
             @ApiParam(value = "Id of connection", required = true, example = "1") @PathVariable("id") Long id,
             @ApiParam(required = true) @RequestBody @Valid ConnectionRequest connectionRequest
     ) {
-        return ResponseEntity.ok(connectionService.updateConnection(id, connectionRequest));
+        final Connection saved = connectionService.updateConnection(id, connectionRequest);
+        log.info("update Connection {}", saved.getName());
+        return ResponseEntity.ok(ModelMapperUtils.map(saved, ConnectionResponse.class));
     }
 
     @DeleteMapping(value = "/{id}")
