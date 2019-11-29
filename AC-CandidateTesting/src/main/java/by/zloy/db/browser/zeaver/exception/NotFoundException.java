@@ -1,6 +1,6 @@
 package by.zloy.db.browser.zeaver.exception;
 
-public class NotFoundException extends RuntimeException {
+public class NotFoundException extends ZeaverException {
     public NotFoundException() {
     }
 

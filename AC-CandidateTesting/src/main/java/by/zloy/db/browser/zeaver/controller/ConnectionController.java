@@ -19,7 +19,7 @@ import javax.validation.Valid;
 
 @RestController("v1.ConnectionController")
 @RequestMapping(value = "/api/v1/connections", produces = MediaType.APPLICATION_JSON_VALUE)
-@Api(tags = "REST", description = "Operations")
+@Api(tags = "REST", description = "Connection operations")
 @Slf4j
 @Validated
 public class ConnectionController {

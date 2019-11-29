@@ -6,14 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
-import java.util.Objects;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 
-@SuppressWarnings("SqlNoDataSourceInspection")
 @Service
 @Scope("prototype")
 @Slf4j
@@ -22,18 +22,20 @@ public class JdbcService {
 
     private JdbcTemplate jdbcTemplate;
 
+    private Function<String, List<Map<String, Object>>> executeFunction = query -> jdbcTemplate.queryForList(query);
+
     @Autowired
     public JdbcService(@Qualifier("dynamicDataSource") DataSource dataSource) {
-        jdbcTemplate = new JdbcTemplate(dataSource);
+        this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
-    //TODO: create interceptor for set/remove connectionId
-    public Boolean test(Long connectionId) {
+    //TODO: add interceptor for set/remove connectionId
+    public List executeQuery(Long connectionId, String query) {
         ConnectionIdHolder.setConnectionId(connectionId);
 
-        final SqlRowSet sqlRowSet = jdbcTemplate.queryForRowSet("select 1");
+        final List<Map<String, Object>> result = executeFunction.apply(query);
 
         ConnectionIdHolder.removeConnectionId();
-        return Objects.nonNull(sqlRowSet);
+        return result;
     }
 }

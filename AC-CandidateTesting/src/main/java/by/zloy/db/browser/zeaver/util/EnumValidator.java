@@ -27,7 +27,7 @@ public class EnumValidator implements ConstraintValidator<EnumValid, String> {
 
         if (!valid) {
             context.disableDefaultConstraintViolation();
-            String messageTemplate = "Value should be one of [" + valueList + "]";
+            String messageTemplate = "Value should be one of " + valueList;
             context.buildConstraintViolationWithTemplate(messageTemplate).addConstraintViolation();
         }
         return valid;

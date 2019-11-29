@@ -25,7 +25,7 @@ public class DataSourceBeanFactory {
         }
     }
 
-    //TODO: remove connection after 10 min of inactivity, add Scheduler
+    //TODO: add Scheduler - remove connection after 10 min of inactivity
     public void deleteIfExist(Object id) {
         getDataSources().remove(id);
     }

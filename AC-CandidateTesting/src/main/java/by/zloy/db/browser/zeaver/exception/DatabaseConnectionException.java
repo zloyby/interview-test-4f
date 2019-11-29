@@ -1,6 +1,6 @@
 package by.zloy.db.browser.zeaver.exception;
 
-public class DatabaseConnectionException extends RuntimeException {
+public class DatabaseConnectionException extends ZeaverException {
     public DatabaseConnectionException() {
     }
 
