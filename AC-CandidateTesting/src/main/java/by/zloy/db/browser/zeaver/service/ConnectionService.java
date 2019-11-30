@@ -7,6 +7,7 @@ import by.zloy.db.browser.zeaver.model.Driver;
 import by.zloy.db.browser.zeaver.repository.ConnectionRepository;
 import by.zloy.db.browser.zeaver.service.dbcp.DataSourceBeanFactory;
 import by.zloy.db.browser.zeaver.util.ModelMapperUtils;
+import javax.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -16,8 +17,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.annotation.PostConstruct;
 
 @Service
 @Slf4j
@@ -50,7 +49,6 @@ public class ConnectionService {
         return saved;
     }
 
-    //TODO: add cache with pagination
     @Transactional(readOnly = true)
     public Page<Connection> getAllConnections(Pageable pageable) {
         log.info("get all Connections {}-{}", pageable.getPageNumber(), pageable.getPageSize());

@@ -7,6 +7,9 @@ import by.zloy.db.browser.zeaver.exception.ZeaverException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -16,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -23,10 +27,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Order(Ordered.HIGHEST_PRECEDENCE)
@@ -73,12 +73,6 @@ public class RestControllerAdvice extends ResponseEntityExceptionHandler {
         return jsonError(reason, HttpStatus.NOT_IMPLEMENTED, null);
     }
 
-    @ExceptionHandler({PropertyReferenceException.class, IllegalArgumentException.class})
-    public ResponseEntity<Object> handleBindModelExceptions(PropertyReferenceException ex) {
-        log.error("Bind Exception", ex);
-        return jsonError("Validation error", HttpStatus.BAD_REQUEST, null);
-    }
-
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<Object> handleNotFoundException(NotFoundException ex) {
         log.error("NotFoundException Exception", ex);
@@ -86,10 +80,16 @@ public class RestControllerAdvice extends ResponseEntityExceptionHandler {
         return jsonError(reason, HttpStatus.NOT_FOUND, null);
     }
 
-    @ExceptionHandler({SQLException.class, DatabaseConnectionException.class})
+    @ExceptionHandler({PropertyReferenceException.class, IllegalArgumentException.class})
+    public ResponseEntity<Object> handleBindModelExceptions(Exception ex) {
+        log.error("Bind Exception", ex);
+        return jsonError("Validation error", HttpStatus.BAD_REQUEST, null);
+    }
+
+    @ExceptionHandler({SQLException.class, DatabaseConnectionException.class, BadSqlGrammarException.class})
     public ResponseEntity<Object> handleDatabaseConnectionException(SQLException ex) {
-        log.error("DatabaseConnectionException Exception", ex);
-        String reason = Optional.ofNullable(ex.getMessage()).orElse("Unable to create database connection");
+        log.error("Database Exception", ex);
+        String reason = Optional.ofNullable(ex.getMessage()).orElse("Error with database");
         return jsonError(reason, HttpStatus.GATEWAY_TIMEOUT, null);
     }
 

@@ -4,18 +4,25 @@ import by.zloy.db.browser.zeaver.controller.response.SingleValueResponse;
 import by.zloy.db.browser.zeaver.service.ConnectionService;
 import by.zloy.db.browser.zeaver.service.JdbcService;
 import by.zloy.db.browser.zeaver.service.dbcp.DataSourceBeanFactory;
-import io.swagger.annotations.*;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import java.util.List;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.util.List;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController("v1.JdbcController")
 @RequestMapping(value = "/api/v1/jdbc", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -41,7 +48,7 @@ public class JdbcController extends AbstractJdbcController {
     public ResponseEntity<List> getCommonDatabaseInfo(
             @ApiParam(value = "Id of connection", required = true, example = "1") @PathVariable("id") @NotNull Long id
     ) {
-        return getQueryResult(id, jdbcOperations.getCommonDatabaseInfo());
+        return getQueryResult(id, findJdbcBridge(id)::getCommonDatabaseInfo);
     }
 
     @GetMapping(value = "/connections/{id}/databases")
@@ -55,7 +62,7 @@ public class JdbcController extends AbstractJdbcController {
     public ResponseEntity<List> getDatabases(
             @ApiParam(value = "Id of connection", required = true, example = "1") @PathVariable("id") @NotNull Long id
     ) {
-        return getQueryResult(id, jdbcOperations.getDatabases());
+        return getQueryResult(id, findJdbcBridge(id)::getDatabases);
     }
 
     @GetMapping(value = "/connections/{id}/schemas")
@@ -69,7 +76,7 @@ public class JdbcController extends AbstractJdbcController {
     public ResponseEntity<List> getSchemas(
             @ApiParam(value = "Id of connection", required = true, example = "1") @PathVariable("id") @NotNull Long id
     ) {
-        return getQueryResult(id, jdbcOperations.getSchemas());
+        return getQueryResult(id, findJdbcBridge(id)::getSchemas);
     }
 
     @GetMapping(value = "/connections/{id}/schemas/{schema}/tables")
@@ -84,7 +91,7 @@ public class JdbcController extends AbstractJdbcController {
             @ApiParam(value = "Id of connection", required = true, example = "1") @PathVariable("id") @NotNull Long id,
             @ApiParam(value = "Schema name", required = true, example = "billing") @PathVariable("schema") @NotEmpty String schema
     ) {
-        return getQueryResult(id, jdbcOperations.getTables(schema));
+        return getQueryResult(id, findJdbcBridge(id).getTables(schema));
     }
 
     @GetMapping(value = "/connections/{id}/schemas/{schema}/tables/statistic")
@@ -99,7 +106,7 @@ public class JdbcController extends AbstractJdbcController {
             @ApiParam(value = "Id of connection", required = true, example = "1") @PathVariable("id") @NotNull Long id,
             @ApiParam(value = "Schema name", required = true, example = "billing") @PathVariable("schema") @NotEmpty String schema
     ) {
-        return getQueryResult(id, jdbcOperations.getTableStatistics(schema));
+        return getQueryResult(id, findJdbcBridge(id).getTableStatistics(schema));
     }
 
     @GetMapping(value = "/connections/{id}/schemas/{schema}/tables/{table}/columns")
@@ -113,9 +120,9 @@ public class JdbcController extends AbstractJdbcController {
     public ResponseEntity<List> getColumns(
             @ApiParam(value = "Id of connection", required = true, example = "1") @PathVariable("id") @NotNull Long id,
             @ApiParam(value = "Schema name", required = true, example = "billing") @PathVariable("schema") @NotEmpty String schema,
-            @ApiParam(value = "Schema name", required = true, example = "transactions") @PathVariable("table") @NotEmpty String table
+            @ApiParam(value = "Table name", required = true, example = "transactions") @PathVariable("table") @NotEmpty String table
     ) {
-        return getQueryResult(id, jdbcOperations.getColumns(schema, table));
+        return getQueryResult(id, findJdbcBridge(id).getColumns(schema, table));
     }
 
     @GetMapping(value = "/connections/{id}/schemas/{schema}/tables/{table}/columns/statistic")
@@ -129,9 +136,9 @@ public class JdbcController extends AbstractJdbcController {
     public ResponseEntity<List> getColumnsStatistic(
             @ApiParam(value = "Id of connection", required = true, example = "1") @PathVariable("id") @NotNull Long id,
             @ApiParam(value = "Schema name", required = true, example = "billing") @PathVariable("schema") @NotEmpty String schema,
-            @ApiParam(value = "Schema name", required = true, example = "transactions") @PathVariable("table") @NotEmpty String table
+            @ApiParam(value = "Table name", required = true, example = "transactions") @PathVariable("table") @NotEmpty String table
     ) {
-        return getQueryResult(id, jdbcOperations.getColumnStatistics(schema, table));
+        return getQueryResult(id, findJdbcBridge(id).getColumnStatistics(schema, table));
     }
 
     @GetMapping(value = "/connections/{id}/schemas/{schema}/tables/{table}/data")
@@ -149,6 +156,6 @@ public class JdbcController extends AbstractJdbcController {
             @ApiParam(value = "Limit (max 100)", required = true, example = "50") @RequestParam(value = "limit", defaultValue = "50") @Max(100) @Min(0) Long limit,
             @ApiParam(value = "Offset", required = true, example = "0") @RequestParam(value = "offset", defaultValue = "0") @Min(0) Long offset
     ) {
-        return getQueryResult(id, jdbcOperations.getData(schema, table, limit, offset));
+        return getQueryResult(id, findJdbcBridge(id).getData(schema, table, limit, offset));
     }
 }

@@ -1,20 +1,30 @@
 package by.zloy.db.browser.zeaver.service.db;
 
-public interface JdbcOperations<T> {
+public interface JdbcOperations {
 
-    T getCommonDatabaseInfo();
+    default String getCommonDatabaseInfo() {
+        return "select version();";
+    }
 
-    T getDatabases();
+    String getDatabases();
 
-    T getSchemas();
+    default String getSchemas() {
+        return "select * from information_schema.schemata;";
+    }
 
-    T getTables(String schema);
+    String getTables(String schema);
 
-    T getColumns(String schema, String table);
+    String getColumns(String schema, String table);
 
-    T getData(String schema, String table, Long limit, Long offset);
+    default String getData(String schema, String table, Long limit, Long offset) {
+        return "select * from " + schema + "." + table + " limit " + limit + " offset " + offset + ";";
+    }
 
-    T getTableStatistics(String schema);
+    default String getTableStatistics(String schema) {
+        return "select true as NOT_IMPLEMENTED";
+    }
 
-    T getColumnStatistics(String schema, String table);
+    default String getColumnStatistics(String schema, String table) {
+        return "select true as NOT_IMPLEMENTED";
+    }
 }

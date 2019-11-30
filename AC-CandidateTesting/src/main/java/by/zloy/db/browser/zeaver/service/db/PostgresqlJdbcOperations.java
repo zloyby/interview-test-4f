@@ -3,22 +3,12 @@ package by.zloy.db.browser.zeaver.service.db;
 import org.springframework.stereotype.Component;
 
 @Component
-public class PostgresqlJdbcOperations implements JdbcOperations<String> {
-
-    @Override
-    public String getCommonDatabaseInfo() {
-        return "SELECT version();";
-    }
+public class PostgresqlJdbcOperations implements JdbcOperations {
 
     @Override
     public String getDatabases() {
-        return "SELECT datname, datdba, datcollate, datctype, datistemplate, datallowconn, datconnlimit, " +
-                "datlastsysoid, datfrozenxid, datminmxid, dattablespace FROM pg_database;";
-    }
-
-    @Override
-    public String getSchemas() {
-        return "SELECT * FROM information_schema.schemata;";
+        return "SELECT datname, datdba, datcollate, datctype, datistemplate, datallowconn, \n" +
+                "datconnlimit, datlastsysoid, datfrozenxid, datminmxid, dattablespace FROM pg_database;";
     }
 
     @Override
@@ -68,20 +58,5 @@ public class PostgresqlJdbcOperations implements JdbcOperations<String> {
                 "    AND n.nspname = '" + schema + "'  \n" +
                 "    AND c.relname = '" + table + "'  \n" +
                 "    AND f.attnum > 0 ORDER BY number;";
-    }
-
-    @Override
-    public String getData(String schema, String table, Long limit, Long offset) {
-        return "SELECT * from " + schema + "." + table + " LIMIT " + limit + " OFFSET " + offset + ";";
-    }
-
-    @Override
-    public String getTableStatistics(String schema) {
-        return "select true as NOT_IMPLEMENTED";
-    }
-
-    @Override
-    public String getColumnStatistics(String schema, String table) {
-        return "select true as NOT_IMPLEMENTED";
     }
 }

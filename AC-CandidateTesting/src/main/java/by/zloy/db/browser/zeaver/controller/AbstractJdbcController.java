@@ -1,21 +1,21 @@
 package by.zloy.db.browser.zeaver.controller;
 
 import by.zloy.db.browser.zeaver.model.Connection;
+import by.zloy.db.browser.zeaver.model.Driver;
 import by.zloy.db.browser.zeaver.service.ConnectionService;
 import by.zloy.db.browser.zeaver.service.JdbcService;
 import by.zloy.db.browser.zeaver.service.db.JdbcOperations;
-import by.zloy.db.browser.zeaver.service.db.PostgresqlJdbcOperations;
+import by.zloy.db.browser.zeaver.service.db.JdbcOperationsFactory;
 import by.zloy.db.browser.zeaver.service.dbcp.DataSourceBeanFactory;
+import java.util.List;
+import java.util.function.Supplier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
 @Component
 abstract public class AbstractJdbcController {
 
-    final JdbcOperations<String> jdbcOperations;
     private final DataSourceBeanFactory dataSourceBeanFactory;
     private final ConnectionService connectionService;
     private final JdbcService jdbcService;
@@ -27,17 +27,24 @@ abstract public class AbstractJdbcController {
         this.connectionService = connectionService;
         this.jdbcService = jdbcService;
         this.dataSourceBeanFactory = dataSourceBeanFactory;
-
-        //TODO: add JdbcOperationsFactory and MysqlJdbcOperations
-        this.jdbcOperations = new PostgresqlJdbcOperations();
     }
 
-    ResponseEntity<List> getQueryResult(Long id, String preparedQuery) {
+    JdbcOperations findJdbcBridge(Long id) {
         final Connection connection = connectionService.getConnection(id);
         dataSourceBeanFactory.addIfNotExist(id, connection);
+        final Driver driver = connection.getDriver();
 
-        final List queryResult = jdbcService.executeQuery(id, preparedQuery);
+        Supplier<JdbcOperationsFactory> factorySupplier = JdbcOperationsFactory::new;
+        return factorySupplier.get().getJdbcOperations(driver);
+    }
 
+    ResponseEntity<List> getQueryResult(Long id, Supplier<String> supplier) {
+        final List queryResult = jdbcService.executeQuery(id, supplier.get());
+        return ResponseEntity.ok(queryResult);
+    }
+
+    ResponseEntity<List> getQueryResult(Long id, String query) {
+        final List queryResult = jdbcService.executeQuery(id, query);
         return ResponseEntity.ok(queryResult);
     }
 }
