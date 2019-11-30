@@ -80,16 +80,16 @@ public class RestControllerAdvice extends ResponseEntityExceptionHandler {
         return jsonError(reason, HttpStatus.NOT_FOUND, null);
     }
 
-    @ExceptionHandler({PropertyReferenceException.class, IllegalArgumentException.class})
+    @ExceptionHandler({BadSqlGrammarException.class, PropertyReferenceException.class, IllegalArgumentException.class})
     public ResponseEntity<Object> handleBindModelExceptions(Exception ex) {
         log.error("Bind Exception", ex);
         return jsonError("Validation error", HttpStatus.BAD_REQUEST, null);
     }
 
-    @ExceptionHandler({SQLException.class, DatabaseConnectionException.class, BadSqlGrammarException.class})
+    @ExceptionHandler({SQLException.class, DatabaseConnectionException.class})
     public ResponseEntity<Object> handleDatabaseConnectionException(SQLException ex) {
         log.error("Database Exception", ex);
-        String reason = Optional.ofNullable(ex.getMessage()).orElse("Error with database");
+        String reason = Optional.ofNullable(ex.getMessage()).orElse("Error with database connection");
         return jsonError(reason, HttpStatus.GATEWAY_TIMEOUT, null);
     }
 
