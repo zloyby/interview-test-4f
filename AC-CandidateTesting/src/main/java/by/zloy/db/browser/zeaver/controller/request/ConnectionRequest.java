@@ -3,15 +3,16 @@ package by.zloy.db.browser.zeaver.controller.request;
 import by.zloy.db.browser.zeaver.model.Driver;
 import by.zloy.db.browser.zeaver.util.EnumValid;
 import io.swagger.annotations.ApiModelProperty;
+import javax.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import javax.validation.constraints.NotEmpty;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class ConnectionRequest {
 
     @ApiModelProperty(value = "Name", example = "My mysql", required = true)
