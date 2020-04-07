@@ -1,4 +1,2 @@
-# interview-tests:
-1) 4f
-2) If
-3) Ac
+# Test projects
+My collection of test projects from different companies. You can analize my knowledge and expose to the real job experience. In most cases all projects are done in about 24 hours (~3 working days), I hope this time is enough to understand developer skills.

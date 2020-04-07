@@ -1,7 +1,7 @@
 # Ataccama - Java test
 
 ## Database browser
-See ./original/ folder for initial requirements for this task.
+See ./todo/ folder for initial requirements for this task.
 
 I've spent about 30-32 hours for this project (from a business point of view - 4 full working days of employee).
 I hope this time is enough to understand developer skills. Imho even 24 hours should be enough.
