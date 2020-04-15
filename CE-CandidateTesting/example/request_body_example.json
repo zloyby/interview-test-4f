@@ -1,0 +1,9 @@
+{
+  "query": "batman",
+  "from": 0,
+  "size": 30,
+  "sort": {
+    "fieldName": "vote_average",
+    "order": "desc"
+  }
+}

@@ -1,0 +1,242 @@
+{
+  "settings": {
+    "index": {
+      "number_of_shards": 8,
+      "number_of_replicas": 3,
+      "auto_expand_replicas": false,
+      "compound_format": false,
+      "refresh_interval": -1,
+      "requests.cache.enable": false,
+      "queries.cache.enabled": false,
+      "search.slowlog.threshold.query.warn": "10s",
+      "search.slowlog.threshold.query.info": "5s",
+      "search.slowlog.threshold.query.debug": "2s",
+      "search.slowlog.threshold.query.trace": "500ms",
+      "search.slowlog.threshold.fetch.warn": "1s",
+      "search.slowlog.threshold.fetch.info": "800ms",
+      "search.slowlog.threshold.fetch.debug": "500ms",
+      "search.slowlog.threshold.fetch.trace": "200ms",
+      "search.slowlog.level": "debug"
+    },
+    "analysis": {
+      "char_filter": {
+        "replace_oe": {
+          "type": "pattern_replace",
+          "pattern": "ö|Ö|o\\u0308|O\\u0308",
+          "replacement": "oe"
+        },
+        "replace_ae": {
+          "type": "pattern_replace",
+          "pattern": "ä|Ä|a\\u0308|A\\u0308",
+          "replacement": "ae"
+        },
+        "replace_ue": {
+          "type": "pattern_replace",
+          "pattern": "ü|Ü|u\\u0308|U\\u0308",
+          "replacement": "ue"
+        },
+        "replace_ss": {
+          "type": "pattern_replace",
+          "pattern": "ß",
+          "replacement": "ss"
+        },
+        "replace_omega": {
+          "type": "pattern_replace",
+          "pattern": "Ω",
+          "replacement": "ohm"
+        },
+        "replace_inch": {
+          "type": "pattern_replace",
+          "pattern": "″",
+          "replacement": "zoll"
+        },
+        "replace_degree": {
+          "type": "pattern_replace",
+          "pattern": "[\\u00B0\\u00AA\\u00BA\\u02DA]C?|\\u2103",
+          "replacement": "grad"
+        },
+        "replace_apple": {
+          "type": "pattern_replace",
+          "pattern": "",
+          "replacement": "apple"
+        },
+        "replace_plusminus": {
+          "type": "pattern_replace",
+          "pattern": "±",
+          "replacement": "plusminus"
+        },
+        "replace_micrometre": {
+          "type": "pattern_replace",
+          "pattern": "(\\d+)\\s?[uµ]m",
+          "replacement": "$1 micrometer"
+        },
+        "replace_millimetre": {
+          "type": "pattern_replace",
+          "pattern": "(\\d+)\\s?mm",
+          "replacement": "$1 millimeter"
+        },
+        "replace_centimetre": {
+          "type": "pattern_replace",
+          "pattern": "(\\d+)\\s?cm",
+          "replacement": "$1 centimeter"
+        },
+        "replace_decimetre": {
+          "type": "pattern_replace",
+          "pattern": "(\\d+)\\s?dm",
+          "replacement": "$1 decimeter"
+        },
+        "replace_metre": {
+          "type": "pattern_replace",
+          "pattern": "(\\d+)\\s?m",
+          "replacement": "$1 meter"
+        },
+        "replace_kilometre": {
+          "type": "pattern_replace",
+          "pattern": "(\\d+)\\s?km",
+          "replacement": "$1 kilometer"
+        },
+        "replace_amount": {
+          "type": "pattern_replace",
+          "pattern": "(\\d+)\\s?[sS]t\\.",
+          "replacement": "$1 stueck"
+        }
+      },
+      "filter": {
+        "remove_duplicates": {
+          "type": "unique",
+          "only_on_same_position": true
+        },
+        "custom_delimiter": {
+          "type": "word_delimiter",
+          "generate_word_parts": true,
+          "generate_number_parts": true,
+          "catenate_words": true,
+          "catenate_numbers": true,
+          "catenate_all": true,
+          "split_on_case_change": true,
+          "preserve_original": true,
+          "split_on_numerics": true,
+          "stem_english_possessive": true
+        },
+        "edge-ngram": {
+          "type": "edgeNGram",
+          "min_gram": 1,
+          "max_gram": 20
+        }
+      },
+      "analyzer": {
+        "std-std": {
+          "type": "custom",
+          "char_filter": [
+            "html_strip",
+            "replace_oe",
+            "replace_ae",
+            "replace_ue",
+            "replace_ss",
+            "replace_omega",
+            "replace_inch",
+            "replace_degree",
+            "replace_apple",
+            "replace_plusminus",
+            "replace_micrometre",
+            "replace_millimetre",
+            "replace_centimetre",
+            "replace_decimetre",
+            "replace_metre",
+            "replace_kilometre",
+            "replace_amount"
+          ],
+          "tokenizer": "standard",
+          "filter": [
+            "lowercase",
+            "icu_folding"
+          ]
+        },
+        "std-edgegram": {
+          "type": "custom",
+          "char_filter": [
+            "html_strip",
+            "replace_oe",
+            "replace_ae",
+            "replace_ue",
+            "replace_ss",
+            "replace_omega",
+            "replace_inch",
+            "replace_degree",
+            "replace_apple",
+            "replace_plusminus",
+            "replace_micrometre",
+            "replace_millimetre",
+            "replace_centimetre",
+            "replace_decimetre",
+            "replace_metre",
+            "replace_kilometre",
+            "replace_amount"
+          ],
+          "tokenizer": "standard",
+          "filter": [
+            "custom_delimiter",
+            "lowercase",
+            "icu_folding",
+            "german_decompounding",
+            "edge-ngram",
+            "remove_duplicates"
+          ]
+        },
+        "cats-std": {
+          "type": "custom",
+          "tokenizer": "category",
+          "filter": [
+            "lowercase",
+            "icu_folding",
+            "german_decompounding",
+            "remove_duplicates"
+          ]
+        },
+        "cats-edgegram": {
+          "type": "custom",
+          "tokenizer": "category",
+          "filter": [
+            "lowercase",
+            "icu_folding",
+            "german_decompounding",
+            "edge-ngram",
+            "remove_duplicates"
+          ]
+        }
+      },
+      "tokenizer": {
+        "category": {
+          "type": "path_hierarchy",
+          "delimiter": "\u001F"
+        }
+      }
+    }
+  },
+  "mappings": {
+    "_doc": {
+      "dynamic_templates": [
+        {
+          "default-to-not-analyzed": {
+            "match_mapping_type": "string",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+        }
+      ],
+      "properties": {
+        "categoryName": {
+          "type": "text",
+          "analyzer": "std-edgegram",
+          "search_analyzer": "std-std"
+        },
+        "cecat_categoryPath": {
+          "type": "keyword",
+          "index": false,
+          "store": false
+        }
+      }
+    }
+  }
+}

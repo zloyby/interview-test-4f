@@ -1,0 +1,464 @@
+{
+  "from": 0,
+  "size": 30,
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "bool": {
+            "should": [
+              {
+                "multi_match": {
+                  "query": "samsung",
+                  "fields": [
+                    "dfs_headline.de^1.5",
+                    "dfs_manufacturerAid^0.1",
+                    "dfs_manufacturerTypeDescription^0.1",
+                    "filter_ean^0.25",
+                    "filter_id^1.0",
+                    "filter_shopWebcode^0.1",
+                    "fs_allNoneMainCategoryPaths.de.filter^0.75",
+                    "fs_brand^3.0",
+                    "fs_brandSynonym^3.0",
+                    "fs_categoryPath.de^0.75",
+                    "fs_categoryPath.de.filter^0.75",
+                    "fs_facts.de^0.25",
+                    "fs_features.de^0.5",
+                    "fs_group.de.filter^2.5",
+                    "fs_sellerName.1000^3.0",
+                    "fs_superbrand^3.0",
+                    "fs_title.de^10.0",
+                    "fs_type.de^2.5",
+                    "fs_webCampaign^0.1",
+                    "fs_webCampaign.filter^0.1",
+                    "search_keywordsGroup.de^0.1",
+                    "search_keywordsHidden.de^0.1",
+                    "search_keywordsProduct.de^0.1"
+                  ],
+                  "type": "phrase",
+                  "operator": "AND",
+                  "slop": 2,
+                  "prefix_length": 0,
+                  "max_expansions": 50,
+                  "tie_breaker": 0.5,
+                  "zero_terms_query": "NONE",
+                  "auto_generate_synonyms_phrase_query": true,
+                  "fuzzy_transpositions": true,
+                  "boost": 1.0
+                }
+              },
+              {
+                "term": {
+                  "fs_brand.filter": {
+                    "value": "Samsung",
+                    "boost": 1.0
+                  }
+                }
+              },
+              {
+                "nested": {
+                  "query": {
+                    "bool": {
+                      "filter": [
+                        {
+                          "term": {
+                            "fn_technicalAttributes.de.id": {
+                              "value": "ATT_MONITOR_CABLE_TYPE",
+                              "boost": 1.0
+                            }
+                          }
+                        },
+                        {
+                          "term": {
+                            "fn_technicalAttributes.de.values": {
+                              "value": "Samsung",
+                              "boost": 1.0
+                            }
+                          }
+                        }
+                      ],
+                      "adjust_pure_negative": true,
+                      "boost": 1.0
+                    }
+                  },
+                  "path": "fn_technicalAttributes.de",
+                  "ignore_unmapped": false,
+                  "score_mode": "sum",
+                  "boost": 1.0
+                }
+              }
+            ],
+            "adjust_pure_negative": true,
+            "boost": 1.0
+          }
+        },
+        {
+          "bool": {
+            "should": [
+              {
+                "multi_match": {
+                  "query": "m2",
+                  "fields": [
+                    "dfs_headline.de^1.5",
+                    "dfs_manufacturerAid^0.1",
+                    "dfs_manufacturerTypeDescription^0.1",
+                    "filter_ean^0.25",
+                    "filter_id^1.0",
+                    "filter_shopWebcode^0.1",
+                    "fs_allNoneMainCategoryPaths.de.filter^0.75",
+                    "fs_brand^3.0",
+                    "fs_brandSynonym^3.0",
+                    "fs_categoryPath.de^0.75",
+                    "fs_categoryPath.de.filter^0.75",
+                    "fs_facts.de^0.25",
+                    "fs_features.de^0.5",
+                    "fs_group.de.filter^2.5",
+                    "fs_sellerName.1000^3.0",
+                    "fs_superbrand^3.0",
+                    "fs_title.de^10.0",
+                    "fs_type.de^2.5",
+                    "fs_webCampaign^0.1",
+                    "fs_webCampaign.filter^0.1",
+                    "search_keywordsGroup.de^0.1",
+                    "search_keywordsHidden.de^0.1",
+                    "search_keywordsProduct.de^0.1"
+                  ],
+                  "type": "phrase",
+                  "operator": "AND",
+                  "slop": 2,
+                  "prefix_length": 0,
+                  "max_expansions": 50,
+                  "tie_breaker": 0.5,
+                  "zero_terms_query": "NONE",
+                  "auto_generate_synonyms_phrase_query": true,
+                  "fuzzy_transpositions": true,
+                  "boost": 1.0
+                }
+              },
+              {
+                "term": {
+                  "dfs_manufacturerTypeDescription.filter": {
+                    "value": "M2",
+                    "boost": 1.0
+                  }
+                }
+              },
+              {
+                "nested": {
+                  "query": {
+                    "bool": {
+                      "filter": [
+                        {
+                          "term": {
+                            "fn_technicalAttributes.de.id": {
+                              "value": "ATT_LOV_TYPE_MICRO_MODELLING",
+                              "boost": 1.0
+                            }
+                          }
+                        },
+                        {
+                          "term": {
+                            "fn_technicalAttributes.de.values": {
+                              "value": "M 2",
+                              "boost": 1.0
+                            }
+                          }
+                        }
+                      ],
+                      "adjust_pure_negative": true,
+                      "boost": 1.0
+                    }
+                  },
+                  "path": "fn_technicalAttributes.de",
+                  "ignore_unmapped": false,
+                  "score_mode": "sum",
+                  "boost": 1.0
+                }
+              },
+              {
+                "nested": {
+                  "query": {
+                    "bool": {
+                      "filter": [
+                        {
+                          "terms": {
+                            "fn_technicalAttributes.de.id": [
+                              "ATT_LOV_HARD_DISC_CONNECTION",
+                              "ATT_LOV_INTERFACES_COMPUTER_MULTIMEDIA"
+                            ],
+                            "boost": 1.0
+                          }
+                        },
+                        {
+                          "term": {
+                            "fn_technicalAttributes.de.values": {
+                              "value": "M.2",
+                              "boost": 1.0
+                            }
+                          }
+                        }
+                      ],
+                      "adjust_pure_negative": true,
+                      "boost": 1.0
+                    }
+                  },
+                  "path": "fn_technicalAttributes.de",
+                  "ignore_unmapped": false,
+                  "score_mode": "sum",
+                  "boost": 1.0
+                }
+              },
+              {
+                "nested": {
+                  "query": {
+                    "bool": {
+                      "filter": [
+                        {
+                          "terms": {
+                            "fn_technicalAttributes.de.id": [
+                              "ATT_LOV_SUPPORTED_MEMORY_CARDS",
+                              "ATT_LOV_INTERFACES_OUTPUT_COMP_MULTIM",
+                              "ATT_LOV_INTERNAL_THREAD",
+                              "ATT_LOV_SCREWDRIVER_SIZE",
+                              "ATT_LOV_EXTERNAL_THREAD",
+                              "ATT_LOV_INTERFACES_COMPUTER_MULTIMEDIA",
+                              "ATT_LOV_THREAD_SIZE"
+                            ],
+                            "boost": 1.0
+                          }
+                        },
+                        {
+                          "term": {
+                            "fn_technicalAttributes.de.values": {
+                              "value": "M2",
+                              "boost": 1.0
+                            }
+                          }
+                        }
+                      ],
+                      "adjust_pure_negative": true,
+                      "boost": 1.0
+                    }
+                  },
+                  "path": "fn_technicalAttributes.de",
+                  "ignore_unmapped": false,
+                  "score_mode": "sum",
+                  "boost": 1.0
+                }
+              }
+            ],
+            "adjust_pure_negative": true,
+            "boost": 1.0
+          }
+        },
+        {
+          "bool": {
+            "should": [
+              {
+                "multi_match": {
+                  "query": "ssd",
+                  "fields": [
+                    "dfs_headline.de^1.5",
+                    "dfs_manufacturerAid^0.1",
+                    "dfs_manufacturerTypeDescription^0.1",
+                    "filter_ean^0.25",
+                    "filter_id^1.0",
+                    "filter_shopWebcode^0.1",
+                    "fs_allNoneMainCategoryPaths.de.filter^0.75",
+                    "fs_brand^3.0",
+                    "fs_brandSynonym^3.0",
+                    "fs_categoryPath.de^0.75",
+                    "fs_categoryPath.de.filter^0.75",
+                    "fs_facts.de^0.25",
+                    "fs_features.de^0.5",
+                    "fs_group.de.filter^2.5",
+                    "fs_sellerName.1000^3.0",
+                    "fs_superbrand^3.0",
+                    "fs_title.de^10.0",
+                    "fs_type.de^2.5",
+                    "fs_webCampaign^0.1",
+                    "fs_webCampaign.filter^0.1",
+                    "search_keywordsGroup.de^0.1",
+                    "search_keywordsHidden.de^0.1",
+                    "search_keywordsProduct.de^0.1"
+                  ],
+                  "type": "phrase",
+                  "operator": "AND",
+                  "slop": 2,
+                  "prefix_length": 0,
+                  "max_expansions": 50,
+                  "tie_breaker": 0.5,
+                  "zero_terms_query": "NONE",
+                  "auto_generate_synonyms_phrase_query": true,
+                  "fuzzy_transpositions": true,
+                  "boost": 1.0
+                }
+              },
+              {
+                "nested": {
+                  "query": {
+                    "bool": {
+                      "filter": [
+                        {
+                          "term": {
+                            "fn_technicalAttributes.de.id": {
+                              "value": "ATT_STORAGE_TYPE",
+                              "boost": 1.0
+                            }
+                          }
+                        },
+                        {
+                          "term": {
+                            "fn_technicalAttributes.de.values": {
+                              "value": "SSD",
+                              "boost": 1.0
+                            }
+                          }
+                        }
+                      ],
+                      "adjust_pure_negative": true,
+                      "boost": 1.0
+                    }
+                  },
+                  "path": "fn_technicalAttributes.de",
+                  "ignore_unmapped": false,
+                  "score_mode": "sum",
+                  "boost": 1.0
+                }
+              }
+            ],
+            "adjust_pure_negative": true,
+            "boost": 1.0
+          }
+        },
+        {
+          "bool": {
+            "should": [
+              {
+                "multi_match": {
+                  "query": "2tb",
+                  "fields": [
+                    "dfs_headline.de^1.5",
+                    "dfs_manufacturerAid^0.1",
+                    "dfs_manufacturerTypeDescription^0.1",
+                    "filter_ean^0.25",
+                    "filter_id^1.0",
+                    "filter_shopWebcode^0.1",
+                    "fs_allNoneMainCategoryPaths.de.filter^0.75",
+                    "fs_brand^3.0",
+                    "fs_brandSynonym^3.0",
+                    "fs_categoryPath.de^0.75",
+                    "fs_categoryPath.de.filter^0.75",
+                    "fs_facts.de^0.25",
+                    "fs_features.de^0.5",
+                    "fs_group.de.filter^2.5",
+                    "fs_sellerName.1000^3.0",
+                    "fs_superbrand^3.0",
+                    "fs_title.de^10.0",
+                    "fs_type.de^2.5",
+                    "fs_webCampaign^0.1",
+                    "fs_webCampaign.filter^0.1",
+                    "search_keywordsGroup.de^0.1",
+                    "search_keywordsHidden.de^0.1",
+                    "search_keywordsProduct.de^0.1"
+                  ],
+                  "type": "phrase",
+                  "operator": "AND",
+                  "slop": 2,
+                  "prefix_length": 0,
+                  "max_expansions": 50,
+                  "tie_breaker": 0.5,
+                  "zero_terms_query": "NONE",
+                  "auto_generate_synonyms_phrase_query": true,
+                  "fuzzy_transpositions": true,
+                  "boost": 1.0
+                }
+              },
+              {
+                "multi_match": {
+                  "query": "2 tb",
+                  "fields": [
+                    "dfs_headline.de^1.5",
+                    "dfs_manufacturerAid^0.1",
+                    "dfs_manufacturerTypeDescription^0.1",
+                    "filter_ean^0.25",
+                    "filter_id^1.0",
+                    "filter_shopWebcode^0.1",
+                    "fs_allNoneMainCategoryPaths.de.filter^0.75",
+                    "fs_brand^3.0",
+                    "fs_brandSynonym^3.0",
+                    "fs_categoryPath.de^0.75",
+                    "fs_categoryPath.de.filter^0.75",
+                    "fs_facts.de^0.25",
+                    "fs_features.de^0.5",
+                    "fs_group.de.filter^2.5",
+                    "fs_sellerName.1000^3.0",
+                    "fs_superbrand^3.0",
+                    "fs_title.de^10.0",
+                    "fs_type.de^2.5",
+                    "fs_webCampaign^0.1",
+                    "fs_webCampaign.filter^0.1",
+                    "search_keywordsGroup.de^0.1",
+                    "search_keywordsHidden.de^0.1",
+                    "search_keywordsProduct.de^0.1"
+                  ],
+                  "type": "phrase",
+                  "operator": "AND",
+                  "slop": 2,
+                  "prefix_length": 0,
+                  "max_expansions": 50,
+                  "tie_breaker": 0.5,
+                  "zero_terms_query": "NONE",
+                  "auto_generate_synonyms_phrase_query": true,
+                  "fuzzy_transpositions": true,
+                  "boost": 1.0
+                }
+              },
+              {
+                "nested": {
+                  "query": {
+                    "bool": {
+                      "filter": [
+                        {
+                          "terms": {
+                            "fn_technicalAttributes.de.id": [
+                              "ATT_MEMORY_CAPACITY",
+                              "ATT_LOV_INTERN_MEMORY",
+                              "ATT_MEMORY_CAPACITY_NATIVE",
+                              "ATT_HARDDISC1_SIZE",
+                              "ATT_NUM_SUPPORTED_HARD_DISC_CAPACITY_MAX"
+                            ],
+                            "boost": 1.0
+                          }
+                        },
+                        {
+                          "term": {
+                            "fn_technicalAttributes.de.values": {
+                              "value": "2 TB",
+                              "boost": 1.0
+                            }
+                          }
+                        }
+                      ],
+                      "adjust_pure_negative": true,
+                      "boost": 1.0
+                    }
+                  },
+                  "path": "fn_technicalAttributes.de",
+                  "ignore_unmapped": false,
+                  "score_mode": "sum",
+                  "boost": 1.0
+                }
+              }
+            ],
+            "adjust_pure_negative": true,
+            "boost": 1.0
+          }
+        }
+      ],
+      "adjust_pure_negative": true,
+      "boost": 1.0,
+      "_name": "multiField"
+    }
+  }
+}

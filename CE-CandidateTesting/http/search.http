@@ -1,0 +1,125 @@
+### Send POST search from example
+POST http://localhost:8080/search
+Accept: */*
+Accept-Encoding: gzip, deflate
+Cache-Control: no-cache
+Connection: keep-alive
+Content-Type: application/json
+Cache-Control: no-cache
+
+{
+  "query": "batman",
+  "from": 0,
+  "size": 5,
+  "sort": {
+    "fieldName": "vote_average",
+    "order": "desc"
+  }
+}
+
+### Send POST search with not sortable field 'title'
+POST http://localhost:8080/search
+Accept: */*
+Accept-Encoding: gzip, deflate
+Cache-Control: no-cache
+Connection: keep-alive
+Content-Type: application/json
+Cache-Control: no-cache
+
+{
+  "query": "batman",
+  "from": 0,
+  "size": 5,
+  "sort": {
+    "fieldName": "title",
+    "order": "desc"
+  }
+}
+
+### Send POST search with wrong sort field
+POST http://localhost:8080/search
+Accept: */*
+Accept-Encoding: gzip, deflate
+Cache-Control: no-cache
+Connection: keep-alive
+Content-Type: application/json
+Cache-Control: no-cache
+
+{
+  "query": "batman",
+  "from": 0,
+  "size": 5,
+  "sort": {
+    "fieldName": "UNKNOWN",
+    "order": "asc"
+  }
+}
+
+### Send POST search without sorting
+POST http://localhost:8080/search
+Accept: */*
+Accept-Encoding: gzip, deflate
+Cache-Control: no-cache
+Connection: keep-alive
+Content-Type: application/json
+Cache-Control: no-cache
+
+{
+  "query": "batman",
+  "from": 0,
+  "size": 5
+}
+
+### Send POST search with partial sorting
+POST http://localhost:8080/search
+Accept: */*
+Accept-Encoding: gzip, deflate
+Cache-Control: no-cache
+Connection: keep-alive
+Content-Type: application/json
+Cache-Control: no-cache
+
+{
+  "query": "batman",
+  "from": 0,
+  "size": 5,
+  "sort": {
+    "fieldName": "popularity"
+  }
+}
+
+### Send POST search by lang
+POST http://localhost:8080/search/en
+Accept: */*
+Accept-Encoding: gzip, deflate
+Cache-Control: no-cache
+Connection: keep-alive
+Content-Type: application/json
+Cache-Control: no-cache
+
+{
+  "query": "batman",
+  "from": 0,
+  "size": 5
+}
+
+### Send POST measureSearchQuality
+POST http://localhost:8080/measureSearchQuality/
+Accept: */*
+Accept-Encoding: gzip, deflate
+Cache-Control: no-cache
+Connection: keep-alive
+Content-Type: application/json
+Cache-Control: no-cache
+
+{
+  "query": "batman",
+  "from": 0,
+  "size": 10,
+  "sort": {
+    "fieldName": "popularity",
+    "order": "desc"
+  }
+}
+
+###

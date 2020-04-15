@@ -1,0 +1,3 @@
+shouldDoSearch: True
+elasticsearchHost: "127.0.0.1"
+elasticsearchPort: 9234
