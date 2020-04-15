@@ -7,7 +7,7 @@ I've spent about 30-32 hours for this project (from a business point of view - 4
 
 ### Tasks
 + CRUD for database connections done
-+ Browsing database structure and data done (tested for Postgresql and Mysql, easy to add any additional) done
++ Browsing database structure and data done (tested for Postgresql and Mysql, easy to add any additional)
 + Bonus task not implemented
 
 ### Links
