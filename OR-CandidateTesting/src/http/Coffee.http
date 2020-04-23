@@ -1,0 +1,22 @@
+### GET request with a header
+GET http://localhost:8080/greet
+Accept: application/json
+
+### GET request with a header
+GET http://localhost:8080/greet/Joe
+Accept: application/json
+
+### GET request with parameter
+PUT http://localhost:8080/greet/greeting
+Accept: application/json
+Content-Type: application/json
+
+{
+  "greeting": "Hola"
+}
+
+### GET request with a header
+GET http://localhost:8080/greet/Jose
+Accept: application/json
+
+###

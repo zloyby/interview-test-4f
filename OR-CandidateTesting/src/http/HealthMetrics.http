@@ -1,0 +1,6 @@
+### GET request with a header
+GET http://localhost:8080/health
+
+### GET request with parameter
+GET http://localhost:8080/metrics
+Accept: application/json
