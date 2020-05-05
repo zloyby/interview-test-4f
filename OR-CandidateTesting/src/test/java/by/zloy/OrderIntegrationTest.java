@@ -31,7 +31,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-class MainTest {
+class OrderIntegrationTest {
     private static Server server;
 
     @BeforeAll
@@ -41,53 +41,49 @@ class MainTest {
 
     @Test
     void testHelloWorld() {
-
         Client client = ClientBuilder.newClient();
 
-        JsonObject jsonObject = client
-                .target(getConnectionString("/greet"))
-                .request()
-                .get(JsonObject.class);
-        Assertions.assertEquals("Hello World!", jsonObject.getString("message"),
-                "default message");
-
-        jsonObject = client
-                .target(getConnectionString("/greet/Joe"))
-                .request()
-                .get(JsonObject.class);
-        Assertions.assertEquals("Hello Joe!", jsonObject.getString("message"),
-                "hello Joe message");
-
-        Response r = client
-                .target(getConnectionString("/greet/greeting"))
-                .request()
-                .put(Entity.entity("{\"greeting\" : \"Hola\"}", MediaType.APPLICATION_JSON));
-        Assertions.assertEquals(204, r.getStatus(), "PUT status code");
-
-        jsonObject = client
-                .target(getConnectionString("/greet/Jose"))
-                .request()
-                .get(JsonObject.class);
-        Assertions.assertEquals("Hola Jose!", jsonObject.getString("message"),
-                "hola Jose message");
-
-        r = client
+        Response response = client
                 .target(getConnectionString("/metrics"))
                 .request()
                 .get();
-        Assertions.assertEquals(200, r.getStatus(), "GET metrics status code");
+        Assertions.assertEquals(200, response.getStatus(), "GET metrics status code");
 
-        r = client
+        response = client
                 .target(getConnectionString("/health"))
                 .request()
                 .get();
-        Assertions.assertEquals(200, r.getStatus(), "GET health status code");
+        Assertions.assertEquals(200, response.getStatus(), "GET health status code is not 200");
+
+        JsonObject jsonObject = client
+                .target(getConnectionString("/orders"))
+                .request()
+                .post(Entity.entity("{\"coffee\" : \"Latte\"}", MediaType.APPLICATION_JSON), JsonObject.class);
+        Assertions.assertNotNull(jsonObject);
+        Assertions.assertNotNull(jsonObject.getJsonString("message"));
+        Assertions.assertNotNull(jsonObject.getJsonString("data"));
+        String id = jsonObject.getJsonString("data").getString();
+        Assertions.assertTrue(validUUID(id));
+
+        jsonObject = client
+                .target(getConnectionString("/orders/" + id))
+                .request()
+                .get(JsonObject.class);
+        Assertions.assertNotNull(jsonObject);
+        Assertions.assertNotNull(jsonObject.getJsonString("message"));
+        Assertions.assertNotNull(jsonObject.getJsonString("data"));
+        Assertions.assertEquals("0", jsonObject.getJsonString("data").getString(),
+                "GET by ID returns not 0 as progress");
     }
 
     @AfterAll
     static void destroyClass() {
         CDI<Object> current = CDI.current();
         ((SeContainer) current).close();
+    }
+
+    private boolean validUUID(String line) {
+        return line.split("-").length == 5; // Just simplest validation
     }
 
     private String getConnectionString(String path) {

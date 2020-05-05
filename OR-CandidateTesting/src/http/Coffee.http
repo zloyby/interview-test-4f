@@ -1,22 +1,42 @@
-### GET request with a header
-GET http://localhost:8080/greet
-Accept: application/json
-
-### GET request with a header
-GET http://localhost:8080/greet/Joe
-Accept: application/json
-
-### GET request with parameter
-PUT http://localhost:8080/greet/greeting
+### POST
+POST http://{{host}}:{{port}}/orders
 Accept: application/json
 Content-Type: application/json
 
 {
-  "greeting": "Hola"
+  "coffee": "Cappuccino"
 }
 
-### GET request with a header
-GET http://localhost:8080/greet/Jose
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+client.test("Response content-type is json", function() {
+  let type = response.contentType.mimeType;
+  client.assert(type === "application/json", "Expected 'application/json' but received '" + type + "'");
+});
+%}
+
+### GET
+GET http://{{host}}:{{port}}/orders/f870bd48-a85b-48ca-a5e1-d84451c5596a
 Accept: application/json
 
-###
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+client.test("Response content-type is json", function() {
+  let type = response.contentType.mimeType;
+  client.assert(type === "application/json", "Expected 'application/json' but received '" + type + "'");
+});
+%}
+
+### GET with unknown ID
+GET http://{{host}}:{{port}}/orders/00000-xxxx-zzzz-123123123123
+Accept: application/json
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 404, "Response status is not 404");
+});
+%}

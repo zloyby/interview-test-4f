@@ -1,6 +1,6 @@
 ### GET request with a header
-GET http://localhost:8080/health
+GET http://{{host}}:{{port}}/health
 
 ### GET request with parameter
-GET http://localhost:8080/metrics
+GET http://{{host}}:{{port}}/metrics
 Accept: application/json

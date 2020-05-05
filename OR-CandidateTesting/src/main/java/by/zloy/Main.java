@@ -44,19 +44,14 @@ public final class Main {
         setupLogging();
 
         // start the server
-        Server server = startServer();
-
-        System.out.println("http://localhost:" + server.port() + "/greet");
+        startServer();
     }
 
     /**
      * Start the server.
-     *
-     * @return the created {@link Server} instance
      */
     static Server startServer() {
-        // Server will automatically pick up configuration from
-        // microprofile-config.properties
+        // Server will automatically pick up configuration from microprofile-config.properties
         // and Application classes annotated as @ApplicationScoped
         return Server.create().start();
     }

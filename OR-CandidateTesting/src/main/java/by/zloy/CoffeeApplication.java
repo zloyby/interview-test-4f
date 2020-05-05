@@ -14,7 +14,26 @@
  * limitations under the License.
  */
 
-/**
- * Quickstart MicroProfile example.
- */
 package by.zloy;
+
+import by.zloy.resource.OrderResource;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.ws.rs.core.Application;
+import java.util.Set;
+
+@ApplicationScoped
+public class CoffeeApplication extends Application {
+
+    private final Set<Class<?>> classes;
+
+    public CoffeeApplication() {
+        super();
+        this.classes = Set.of(OrderResource.class, JPAExceptionMapper.class);
+    }
+
+    @Override
+    public Set<Class<?>> getClasses() {
+        return this.classes;
+    }
+}
