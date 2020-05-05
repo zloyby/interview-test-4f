@@ -1,0 +1,11 @@
+apiVersion: skaffold/v2beta2
+kind: Config
+metadata:
+  name: coffee-planner
+build:
+  artifacts:
+    - image: coffee
+deploy:
+  kubectl:
+    manifests:
+      - app.yaml

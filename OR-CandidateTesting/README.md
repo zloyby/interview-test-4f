@@ -1,13 +1,24 @@
 # CoffeePlanner
 
-Create a REST API for coffee machines in Oracle Waltrovka office. Office building has several floors and there are several kitchens on each floor. Some (most) of those kitchens are equipped with coffee machines. User should be able to request a cup of coffee (cappuccino, latte, espresso) and get status of his order.
+Would like to investigate some new frameworks, as used in 'OR' company:
+* Helidon
+* MicroProfile (Config, Health, Metrics, Fault Tolerance)
+* EclipseLink (JTA, JPA)
+* JWT Auth with Helidon security context 
+* Docker multi-stage builds and Kubernetes cluster
 
-* Create REST API in Java.
+### Task 
+
+Create a REST API for coffee machines in Oracle Waltrovka office. 
+Office building has several floors and there are several kitchens on each floor. 
+Some (most) of those kitchens are equipped with coffee machines. 
+User should be able to request a cup of coffee (cappuccino, latte, espresso) and get status of his order.
+
+* Create REST API in Java
 * UI is not required
 * Use technologies of your choice
 * Ideally send your solution as link to github
 * Extra points (optional) for deploying solution to some cloud provider (OCI, AWS, Azure, etc...)
-
 
 ### Endpoints
 
@@ -31,7 +42,6 @@ curl -s -X GET http://localhost:8080/metrics
 # JSON Format
 curl -H 'Accept: application/json' -X GET http://localhost:8080/metrics
 {"base":...
-.....
 ```
 
 
@@ -46,7 +56,8 @@ java -jar target/coffee.jar
 
 ```
 docker build -t coffee .
-docker run --rm -p 8080:8080 coffee:latest
+docker run --rm -p --name coffee 8080:8080 coffee:latest
+docker stop coffee
 ```
 
 ### Deploy the application to Kubernetes
@@ -55,7 +66,8 @@ docker run --rm -p 8080:8080 coffee:latest
 kubectl cluster-info            # Verify which cluster
 kubectl get pods                # Verify connectivity to cluster
 kubectl create -f app.yaml      # Deploy application
-kubectl get service coffee      # Verify deployed service
+kubectl get service coffee      # Verify deployed service, get IP address of deployed sevice
+kubectl delete -f app.yaml      # Delete application
 ```
 
 ### GraalVM: build a native image
