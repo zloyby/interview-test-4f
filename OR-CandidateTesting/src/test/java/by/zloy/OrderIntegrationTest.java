@@ -30,40 +30,41 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.time.OffsetDateTime;
 
 class OrderIntegrationTest {
     private static Server server;
 
     @BeforeAll
-    public static void startTheServer() throws Exception {
+    public static void startTheServer() {
         server = Main.startServer();
     }
 
     @Test
-    void testHelloWorld() {
+    void testCreateOrderAndGetStatus() {
         Client client = ClientBuilder.newClient();
 
         Response response = client
                 .target(getConnectionString("/metrics"))
                 .request()
                 .get();
-        Assertions.assertEquals(200, response.getStatus(), "GET metrics status code");
+        Assertions.assertEquals(200, response.getStatus(), "metrics status code is not 200");
 
         response = client
                 .target(getConnectionString("/health"))
                 .request()
                 .get();
-        Assertions.assertEquals(200, response.getStatus(), "GET health status code is not 200");
+        Assertions.assertEquals(200, response.getStatus(), "health status code is not 200");
 
         JsonObject jsonObject = client
                 .target(getConnectionString("/orders"))
                 .request()
-                .post(Entity.entity("{\"coffee\" : \"Latte\"}", MediaType.APPLICATION_JSON), JsonObject.class);
+                .post(Entity.entity("{\"coffee\" : \"Latte\", \"machine\" : \"Hulk\"}", MediaType.APPLICATION_JSON), JsonObject.class);
         Assertions.assertNotNull(jsonObject);
         Assertions.assertNotNull(jsonObject.getJsonString("message"));
-        Assertions.assertNotNull(jsonObject.getJsonString("data"));
-        String id = jsonObject.getJsonString("data").getString();
-        Assertions.assertTrue(validUUID(id));
+        Assertions.assertNotNull(jsonObject.getJsonString("payload"));
+        String id = jsonObject.getJsonString("payload").getString();
+        Assertions.assertTrue(validUUID(id), "order ID is not UUID");
 
         jsonObject = client
                 .target(getConnectionString("/orders/" + id))
@@ -71,9 +72,11 @@ class OrderIntegrationTest {
                 .get(JsonObject.class);
         Assertions.assertNotNull(jsonObject);
         Assertions.assertNotNull(jsonObject.getJsonString("message"));
-        Assertions.assertNotNull(jsonObject.getJsonString("data"));
-        Assertions.assertEquals("0", jsonObject.getJsonString("data").getString(),
-                "GET by ID returns not 0 as progress");
+        Assertions.assertNotNull(jsonObject.getJsonString("payload"));
+        String dateTime = jsonObject.getJsonString("payload").getString();
+        OffsetDateTime parse = OffsetDateTime.parse(dateTime);
+        Assertions.assertTrue(parse.compareTo(OffsetDateTime.now()) > 0,
+                "Ready dateTime is less than current dateTime");
     }
 
     @AfterAll

@@ -80,6 +80,12 @@
             <artifactId>jersey-media-json-binding</artifactId>
         </dependency>
 
+        <!-- OpenAPI dependencies. -->
+        <dependency>
+            <groupId>org.eclipse.microprofile.openapi</groupId>
+            <artifactId>microprofile-openapi-api</artifactId>
+        </dependency>
+
         <!-- H2 dependencies. -->
         <dependency>
             <groupId>com.h2database</groupId>

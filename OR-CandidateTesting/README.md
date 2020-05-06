@@ -9,7 +9,7 @@ Would like to investigate some new frameworks, as used in 'OR' company:
 
 ### Task 
 
-Create a REST API for coffee machines in Oracle Waltrovka office. 
+Create a REST API for coffee machines in office. 
 Office building has several floors and there are several kitchens on each floor. 
 Some (most) of those kitchens are equipped with coffee machines. 
 User should be able to request a cup of coffee (cappuccino, latte, espresso) and get status of his order.
@@ -25,8 +25,7 @@ User should be able to request a cup of coffee (cappuccino, latte, espresso) and
 ##### OpenAPI
 
 ```
-curl -s -X GET http://localhost:8080/swagger-ui.html
-{...
+curl -s -X GET http://localhost:8080/openapi
 ```
 
 ##### Health and metrics
@@ -35,13 +34,11 @@ curl -s -X GET http://localhost:8080/swagger-ui.html
 curl -s -X GET http://localhost:8080/health
 {"outcome":"UP",...
 .....
-# Prometheus Format
 curl -s -X GET http://localhost:8080/metrics
 # TYPE base:gc_g1_young_generation_count gauge
 .....
-# JSON Format
 curl -H 'Accept: application/json' -X GET http://localhost:8080/metrics
-{"base":...
+{"base":"gc_g1_young_generation_count",...
 ```
 
 

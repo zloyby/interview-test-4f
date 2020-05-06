@@ -15,15 +15,19 @@
  */
 package by.zloy.service;
 
-import by.zloy.jpa.Coffee;
-import by.zloy.jpa.Order;
+import by.zloy.model.Coffee;
+import by.zloy.model.Machine;
+import by.zloy.model.Order;
 
 import javax.enterprise.context.Dependent;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
+import java.time.OffsetDateTime;
 import java.util.UUID;
+
+import static java.time.temporal.ChronoUnit.MINUTES;
 
 @Dependent
 public class OrderProvider {
@@ -33,17 +37,22 @@ public class OrderProvider {
 
     @Transactional(Transactional.TxType.REQUIRED)
     public Order getOrder(String orderId) {
-        final TypedQuery<Order> query = this.entityManager.createNamedQuery("findById", Order.class);
+        final TypedQuery<Order> query = this.entityManager.createNamedQuery("Orders.findById", Order.class);
         query.setParameter("orderId", orderId);
         return query.getSingleResult();
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
-    public String createOrder(String coffeeName) {
-        Order order = new Order(
+    public String createOrder(String coffeeName, String machineId) {
+        final TypedQuery<Machine> query = this.entityManager.createNamedQuery("Machines.findById", Machine.class);
+        query.setParameter("machineId", machineId);
+        Machine machine = query.getSingleResult();
+
+        final Order order = new Order(
                 UUID.randomUUID().toString(),
                 Coffee.valueOf(coffeeName),
-                0);
+                OffsetDateTime.now().plus(machine.getVelocity(), MINUTES),
+                machine);
         this.entityManager.persist(order);
         return order.getOrderId();
     }

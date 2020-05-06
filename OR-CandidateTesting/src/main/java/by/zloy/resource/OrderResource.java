@@ -16,8 +16,11 @@
 
 package by.zloy.resource;
 
-import by.zloy.jpa.Order;
+import by.zloy.model.Machine;
+import by.zloy.model.Order;
+import by.zloy.service.MachineProvider;
 import by.zloy.service.OrderProvider;
+import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
@@ -28,14 +31,17 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.json.Json;
+import javax.json.JsonArrayBuilder;
 import javax.json.JsonBuilderFactory;
 import javax.json.JsonObject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.time.OffsetDateTime;
 import java.util.Collections;
+import java.util.List;
 
-@Path("/orders")
+@Path("/")
 @RequestScoped
 public class OrderResource {
 
@@ -44,40 +50,116 @@ public class OrderResource {
     @Inject
     private OrderProvider orderProvider;
 
+    @Inject
+    private MachineProvider machineProvider;
+
     public OrderResource() {
         super();
     }
 
-    @Path("/{orderId}")
+    @Path("machines")
     @GET
+    @Operation(summary = "Get available coffee machines", description = "Find best coffee machine for you and remember the name.")
+    @APIResponses({
+            @APIResponse(name = "normal",
+                    responseCode = "200",
+                    description = "Returns available coffee machines",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = JsonResponse.class))),
+            @APIResponse(name = "invalid request", responseCode = "400"),
+            @APIResponse(name = "not found", responseCode = "404"),
+            @APIResponse(name = "internal error", responseCode = "500")
+    })
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getOrder(@PathParam("orderId") String orderId) {
-        Order order = orderProvider.getOrder(orderId);
+    public Response getCoffeeMachines() {
+        List<Machine> machines = machineProvider.getAll();
 
-        String msg = String.format("You '%s coffee' order status is %s%%.", order.getCoffee(), order.getProgress());
-        return Response.ok().entity(createResponse(msg, order.getProgress().toString())).build();
+        String msg = "You can choose any suitable coffee machine and make a new order with machine name.";
+        return Response.ok().entity(json(msg, machines)).build();
     }
 
+    @Path("orders")
     @POST
+    @Operation(summary = "Create new order", description = "For ordering you should choose coffee from list [Cappuccino, Latte, Espresso] and coffee machine name.")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @RequestBody(name = "createOrder",
             required = true,
             content = @Content(mediaType = "application/json",
-                    schema = @Schema(type = SchemaType.STRING, example = "{\"coffee\" : \"Latte\"}")))
+                    schema = @Schema(type = SchemaType.STRING, example = "{\"coffee\" : \"Latte\", \"machine\" : \"Hulk\"}")))
     @APIResponses({
-            @APIResponse(name = "normal", responseCode = "204", description = "Order created"),
-            @APIResponse(name = "invalid JSON", responseCode = "400")
+            @APIResponse(name = "normal",
+                    responseCode = "200",
+                    description = "Order successfully created",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = JsonResponse.class))),
+            @APIResponse(name = "invalid request", responseCode = "400"),
+            @APIResponse(name = "not found", responseCode = "404"),
+            @APIResponse(name = "internal error", responseCode = "500")
     })
     public Response createOrder(JsonObject jsonObject) {
         String coffeeName = jsonObject.getString("coffee");
-        String id = orderProvider.createOrder(coffeeName);
+        String machineId = jsonObject.getString("machine");
+        String id = orderProvider.createOrder(coffeeName, machineId);
 
-        String msg = String.format("You '%s coffee' order can be checked by ID '%s'.", coffeeName, id);
-        return Response.ok().entity(createResponse(msg, id)).build();
+        String msg = String.format("Create '%s' order with order ID '%s'.", coffeeName, id);
+        return Response.ok().entity(json(msg, id)).build();
     }
 
-    private JsonObject createResponse(String msg, String data) {
-        return JSON.createObjectBuilder().add("message", msg).add("data", data).build();
+    @Path("orders/{orderId}")
+    @GET
+    @Operation(summary = "Get order status", description = "You can see order status by order id.")
+    @Produces(MediaType.APPLICATION_JSON)
+    @APIResponses({
+            @APIResponse(name = "normal",
+                    responseCode = "200",
+                    description = "Returns order status",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = JsonResponse.class))),
+            @APIResponse(name = "invalid request", responseCode = "400"),
+            @APIResponse(name = "not found", responseCode = "404"),
+            @APIResponse(name = "internal error", responseCode = "500")
+    })
+    public Response getOrder(@PathParam("orderId") String orderId) {
+        Order order = orderProvider.getOrder(orderId);
+
+        String msg = (order.getReadyDateTime().compareTo(OffsetDateTime.now()) > 0)
+                ? String.format("You '%s' will be ready at %s.", order.getCoffee(), order.getReadyDateTime())
+                : String.format("You '%s' is ready.", order.getCoffee());
+        return Response.ok().entity(json(msg, order.getReadyDateTime().toString())).build();
+    }
+
+    private JsonObject json(String msg, String data) {
+        return JSON.createObjectBuilder().add("message", msg).add("payload", data).build();
+    }
+
+    private JsonObject json(String msg, List<Machine> objects) {
+        JsonArrayBuilder jsonArrayBuilder = JSON.createArrayBuilder();
+        objects.forEach(o -> jsonArrayBuilder.add(JSON.createObjectBuilder()
+                .add("Coffee Machine", o.getMachineId())
+                .add("Kitchen", o.getKitchen())
+                .add("Floor", o.getFloor())
+                .add("Next order availability (min)", o.getAvailability().toString())
+        ));
+        return JSON.createObjectBuilder().add("message", msg).add("payload", jsonArrayBuilder).build();
+    }
+
+    private static class JsonResponse {
+
+        private String message;
+        private Object payload;
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
+
+        public Object getPayload() {
+            return payload;
+        }
+
+        public void setPayload(Object payload) {
+            this.payload = payload;
+        }
     }
 }
