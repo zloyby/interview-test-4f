@@ -37,7 +37,10 @@ import javax.json.JsonObject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.time.Duration;
 import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.Collections;
 import java.util.List;
 
@@ -73,7 +76,7 @@ public class OrderResource {
     public Response getCoffeeMachines() {
         List<Machine> machines = machineProvider.getAll();
 
-        String msg = "You can choose any suitable coffee machine and make a new order with machine name.";
+        String msg = "You can choose any suitable coffee machine and make a new order.";
         return Response.ok().entity(json(msg, machines)).build();
     }
 
@@ -121,7 +124,7 @@ public class OrderResource {
         Order order = orderProvider.getOrder(orderId);
 
         String msg = (order.getReadyDateTime().compareTo(OffsetDateTime.now()) > 0)
-                ? String.format("You '%s' will be ready at %s.", order.getCoffee(), order.getReadyDateTime())
+                ? String.format("You '%s' will be ready at %s.", order.getCoffee(), order.getReadyDateTime().format(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)))
                 : String.format("You '%s' is ready.", order.getCoffee());
         return Response.ok().entity(json(msg, order.getReadyDateTime().toString())).build();
     }
@@ -131,14 +134,22 @@ public class OrderResource {
     }
 
     private JsonObject json(String msg, List<Machine> objects) {
+        final OffsetDateTime now = OffsetDateTime.now();
         JsonArrayBuilder jsonArrayBuilder = JSON.createArrayBuilder();
         objects.forEach(o -> jsonArrayBuilder.add(JSON.createObjectBuilder()
-                .add("Coffee Machine", o.getMachineId())
+                .add("Coffee machine", o.getMachineId())
                 .add("Kitchen", o.getKitchen())
                 .add("Floor", o.getFloor())
-                .add("Next order availability (min)", o.getAvailability().toString())
+                .add("You coffee will be ready in (min)", calculateAvailability(o, now))
         ));
         return JSON.createObjectBuilder().add("message", msg).add("payload", jsonArrayBuilder).build();
+    }
+
+    private long calculateAvailability(Machine machine, OffsetDateTime now) {
+        OffsetDateTime whenMachineIsAvailable = machine.getAvailability();
+        Duration duration = Duration.between(now, whenMachineIsAvailable);
+        Integer minutesToMakeCoffee = machine.getVelocity();
+        return duration.toMinutes() + minutesToMakeCoffee;
     }
 
     private static class JsonResponse {

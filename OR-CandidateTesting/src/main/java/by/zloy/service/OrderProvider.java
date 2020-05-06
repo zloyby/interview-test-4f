@@ -47,11 +47,14 @@ public class OrderProvider {
         final TypedQuery<Machine> query = this.entityManager.createNamedQuery("Machines.findById", Machine.class);
         query.setParameter("machineId", machineId);
         Machine machine = query.getSingleResult();
+        OffsetDateTime availability = machine.getAvailability().plus(machine.getVelocity(), MINUTES);
+        machine.setAvailability(availability);
+        machine = this.entityManager.merge(machine);
 
         final Order order = new Order(
                 UUID.randomUUID().toString(),
                 Coffee.valueOf(coffeeName),
-                OffsetDateTime.now().plus(machine.getVelocity(), MINUTES),
+                availability,
                 machine);
         this.entityManager.persist(order);
         return order.getOrderId();

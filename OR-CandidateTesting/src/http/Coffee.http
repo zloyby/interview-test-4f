@@ -1,3 +1,17 @@
+### GET
+GET http://{{host}}:{{port}}/machines
+Accept: application/json
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+client.test("Response content-type is json", function() {
+  var type = response.contentType.mimeType;
+  client.assert(type === "application/json", "Expected 'application/json' but received '" + type + "'");
+});
+%}
+
 ### POST
 POST http://{{host}}:{{port}}/orders
 Accept: application/json
@@ -5,7 +19,7 @@ Content-Type: application/json
 
 {
   "coffee": "Cappuccino",
-  "machine": "Hulk"
+  "machine": "Folk"
 }
 
 > {%
@@ -19,7 +33,11 @@ client.test("Response content-type is json", function() {
 %}
 
 ### GET
-GET http://{{host}}:{{port}}/orders/f870bd48-a85b-48ca-a5e1-d84451c5596a
+GET http://{{host}}:{{port}}/orders/9d895922-9592-4c59-929b-76c6853d4de8
+Accept: application/json
+
+### GET
+GET http://{{host}}:{{port}}/orders/01471672-a8e4-45d7-b006-a2bf1ecb24bc
 Accept: application/json
 
 > {%

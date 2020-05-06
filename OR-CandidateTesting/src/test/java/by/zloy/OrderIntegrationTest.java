@@ -24,6 +24,7 @@ import org.junit.jupiter.api.Test;
 
 import javax.enterprise.inject.se.SeContainer;
 import javax.enterprise.inject.spi.CDI;
+import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -31,6 +32,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.time.OffsetDateTime;
+import java.util.concurrent.TimeUnit;
 
 class OrderIntegrationTest {
     private static Server server;
@@ -41,7 +43,7 @@ class OrderIntegrationTest {
     }
 
     @Test
-    void testCreateOrderAndGetStatus() {
+    void testHealthAndMetrics() {
         Client client = ClientBuilder.newClient();
 
         Response response = client
@@ -55,17 +57,86 @@ class OrderIntegrationTest {
                 .request()
                 .get();
         Assertions.assertEquals(200, response.getStatus(), "health status code is not 200");
+    }
 
+    @Test
+    void testGetAllCoffeeMachinesAndCheckAvailabilityAfterAddOrder() {
+        Client client = ClientBuilder.newClient();
+
+        // Initially Hulk have 6 min velocity
         JsonObject jsonObject = client
+                .target(getConnectionString("/machines"))
+                .request()
+                .get(JsonObject.class);
+        Assertions.assertNotNull(jsonObject);
+        Assertions.assertNotNull(jsonObject.getJsonString("message"));
+        Assertions.assertNotNull(jsonObject.getJsonArray("payload"));
+        JsonArray payload = jsonObject.getJsonArray("payload");
+        Assertions.assertEquals(2, payload.size());
+        int readyMin = ("Hulk".equals(payload.getJsonObject(0).getString("Coffee machine")))
+                ? payload.getJsonObject(0).getInt("You coffee will be ready in (min)")
+                : payload.getJsonObject(1).getInt("You coffee will be ready in (min)");
+        Assertions.assertEquals(6, readyMin);
+
+        // make new order to Hulk
+        client
                 .target(getConnectionString("/orders"))
                 .request()
                 .post(Entity.entity("{\"coffee\" : \"Latte\", \"machine\" : \"Hulk\"}", MediaType.APPLICATION_JSON), JsonObject.class);
+
+        //check ready time, as velocity is 6 - should be (6-1)+6, -1 because machine already started to make coffee
+        jsonObject = client
+                .target(getConnectionString("/machines"))
+                .request()
+                .get(JsonObject.class);
+        Assertions.assertNotNull(jsonObject);
+        Assertions.assertNotNull(jsonObject.getJsonString("message"));
+        Assertions.assertNotNull(jsonObject.getJsonArray("payload"));
+        payload = jsonObject.getJsonArray("payload");
+        Assertions.assertEquals(2, payload.size());
+        readyMin = ("Hulk".equals(payload.getJsonObject(0).getString("Coffee machine")))
+                ? payload.getJsonObject(0).getInt("You coffee will be ready in (min)")
+                : payload.getJsonObject(1).getInt("You coffee will be ready in (min)");
+        Assertions.assertEquals(11, readyMin);
+
+        // make another order to Hulk
+        client
+                .target(getConnectionString("/orders"))
+                .request()
+                .post(Entity.entity("{\"coffee\" : \"Espresso\", \"machine\" : \"Hulk\"}", MediaType.APPLICATION_JSON), JsonObject.class);
+
+        // check ready time, as velocity is 6 - should be (6-1)+6+6
+        jsonObject = client
+                .target(getConnectionString("/machines"))
+                .request()
+                .get(JsonObject.class);
+        Assertions.assertNotNull(jsonObject);
+        Assertions.assertNotNull(jsonObject.getJsonString("message"));
+        Assertions.assertNotNull(jsonObject.getJsonArray("payload"));
+        payload = jsonObject.getJsonArray("payload");
+        Assertions.assertEquals(2, payload.size());
+        readyMin = ("Hulk".equals(payload.getJsonObject(0).getString("Coffee machine")))
+                ? payload.getJsonObject(0).getInt("You coffee will be ready in (min)")
+                : payload.getJsonObject(1).getInt("You coffee will be ready in (min)");
+        Assertions.assertEquals(17, readyMin);
+    }
+
+    @Test
+    void testCreateOrderAndGetStatus() throws InterruptedException {
+        Client client = ClientBuilder.newClient();
+
+        // make new order
+        JsonObject jsonObject = client
+                .target(getConnectionString("/orders"))
+                .request()
+                .post(Entity.entity("{\"coffee\" : \"Latte\", \"machine\" : \"Lion\"}", MediaType.APPLICATION_JSON), JsonObject.class);
         Assertions.assertNotNull(jsonObject);
         Assertions.assertNotNull(jsonObject.getJsonString("message"));
         Assertions.assertNotNull(jsonObject.getJsonString("payload"));
         String id = jsonObject.getJsonString("payload").getString();
         Assertions.assertTrue(validUUID(id), "order ID is not UUID");
 
+        // check this order
         jsonObject = client
                 .target(getConnectionString("/orders/" + id))
                 .request()
@@ -77,6 +148,21 @@ class OrderIntegrationTest {
         OffsetDateTime parse = OffsetDateTime.parse(dateTime);
         Assertions.assertTrue(parse.compareTo(OffsetDateTime.now()) > 0,
                 "Ready dateTime is less than current dateTime");
+
+        // sleep 1 min (as machine Lion has 1 min velocity) and re-check order
+        TimeUnit.MINUTES.sleep(1L);
+        jsonObject = client
+                .target(getConnectionString("/orders/" + id))
+                .request()
+                .get(JsonObject.class);
+        Assertions.assertNotNull(jsonObject);
+        Assertions.assertNotNull(jsonObject.getJsonString("message"));
+        Assertions.assertNotNull(jsonObject.getJsonString("payload"));
+        dateTime = jsonObject.getJsonString("payload").getString();
+        parse = OffsetDateTime.parse(dateTime);
+        Assertions.assertTrue(parse.compareTo(OffsetDateTime.now()) < 0,
+                "Ready dateTime is more than current dateTime, even after 1 min sleep");
+
     }
 
     @AfterAll

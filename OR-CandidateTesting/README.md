@@ -1,6 +1,6 @@
 # CoffeePlanner
 
-Would like to investigate some new frameworks, as used in 'OR' company:
+Would like to investigate some new frameworks used in 'OR' company:
 * Helidon
 * MicroProfile (Config, Health, Metrics, Fault Tolerance)
 * EclipseLink (JTA, JPA)
@@ -52,9 +52,9 @@ java -jar target/coffee.jar
 ### Build the Docker image and start the application
 
 ```
-docker build -t coffee .
-docker run --rm -p --name coffee 8080:8080 coffee:latest
-docker stop coffee
+docker build -t coffee .                                    # Build
+docker run --rm -p --name coffee 8080:8080 coffee:latest    # Run
+docker stop coffee                                          # Stop
 ```
 
 ### Deploy the application to Kubernetes

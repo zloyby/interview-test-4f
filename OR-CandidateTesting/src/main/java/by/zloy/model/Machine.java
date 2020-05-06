@@ -65,6 +65,13 @@ public class Machine implements Serializable {
     }
 
     public OffsetDateTime getAvailability() {
-        return Objects.nonNull(availability) ? availability : OffsetDateTime.now();
+        OffsetDateTime now = OffsetDateTime.now();
+        return Objects.nonNull(availability) && availability.compareTo(now) > 0
+                ? availability
+                : OffsetDateTime.now();
+    }
+
+    public void setAvailability(OffsetDateTime availability) {
+        this.availability = availability;
     }
 }
