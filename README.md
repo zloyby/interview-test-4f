@@ -1,6 +1,11 @@
 # Test projects
 My collection of test projects from different companies. You can analyse my knowledge and expose it to the real job experience. Tried not to spend more than 24 hours (~3 working days), because I think it's enough to understand developer skills.
 
+## OR
+Homework to develop a project from scratch. I decided to learn new frameworks used in this company and created a REST API for coffee machines.
+
+_Keywords: Java, Helidon, MicroProfile, EclipseLink, Docker, Kubernetes, OpenAPI_
+
 ## AC
 Nice task to develop web based database browser (similar to desktop application DBeaver) from scratch. See "./todo/Java Developer - REST API for database.pdf" file for initial requirements.
 
