@@ -46,7 +46,7 @@ import java.util.List;
 
 @Path("/")
 @RequestScoped
-public class OrderResource {
+public class CoffeeResource {
 
     private static final JsonBuilderFactory JSON = Json.createBuilderFactory(Collections.emptyMap());
 
@@ -56,7 +56,7 @@ public class OrderResource {
     @Inject
     private MachineProvider machineProvider;
 
-    public OrderResource() {
+    public CoffeeResource() {
         super();
     }
 
@@ -130,7 +130,7 @@ public class OrderResource {
 
         OffsetDateTime readyDateTime = order.getReadyDateTime();
         String msg = (readyDateTime.compareTo(OffsetDateTime.now()) > 0)
-                ? String.format("You '%s' will be ready at %s.", order.getCoffee(), getLocalTime(readyDateTime))
+                ? String.format("You '%s' will be ready at %s UTC.", order.getCoffee(), getLocalTime(readyDateTime))
                 : String.format("You '%s' is ready.", order.getCoffee());
         return Response.ok().entity(json(msg, readyDateTime.toString())).build();
     }

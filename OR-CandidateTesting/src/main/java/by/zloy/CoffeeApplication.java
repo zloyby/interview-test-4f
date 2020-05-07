@@ -16,7 +16,7 @@
 
 package by.zloy;
 
-import by.zloy.resource.OrderResource;
+import by.zloy.resource.CoffeeResource;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.ws.rs.core.Application;
@@ -29,7 +29,7 @@ public class CoffeeApplication extends Application {
 
     public CoffeeApplication() {
         super();
-        this.classes = Set.of(OrderResource.class, JPAExceptionMapper.class);
+        this.classes = Set.of(CoffeeResource.class, JPAExceptionMapper.class);
     }
 
     @Override

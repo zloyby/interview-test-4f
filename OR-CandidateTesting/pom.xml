@@ -222,27 +222,6 @@
             </plugin>
 
             <plugin>
-                <groupId>com.ethlo.persistence.tools</groupId>
-                <artifactId>eclipselink-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>weave</id>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>weave</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>modelgen</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>modelgen</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
                 <executions>
                     <execution>

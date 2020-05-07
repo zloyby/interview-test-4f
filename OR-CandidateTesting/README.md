@@ -53,18 +53,18 @@ java -jar target/coffee.jar
 
 ```
 docker build -t coffee .                                    # Build
-docker run --rm -p --name coffee 8080:8080 coffee:latest    # Run
+docker run --rm -p 8080:8080 --name coffee coffee:latest    # Run
 docker stop coffee                                          # Stop
 ```
 
 ### Deploy the application to Kubernetes
 
 ```
-kubectl cluster-info            # Verify which cluster
-kubectl get pods                # Verify connectivity to cluster
-kubectl create -f app.yaml      # Deploy application
-kubectl get service coffee      # Verify deployed service, get IP address of deployed sevice
-kubectl delete -f app.yaml      # Delete application
+kubectl cluster-info                    # Verify which cluster
+kubectl get pods                        # Verify connectivity to cluster
+kubectl create -f app.yaml              # Deploy application
+kubectl get service coffee-service      # Verify deployed service, get IP address of deployed sevice
+kubectl delete -f app.yaml              # Delete application
 ```
 
 ### GraalVM: build a native image

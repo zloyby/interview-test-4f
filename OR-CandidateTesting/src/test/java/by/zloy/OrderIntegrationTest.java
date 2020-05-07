@@ -60,10 +60,22 @@ class OrderIntegrationTest {
     }
 
     @Test
+    void testOpenID() {
+        Client client = ClientBuilder.newClient();
+
+        Response response = client
+                .target(getConnectionString("/openid"))
+                .request()
+                .header("Accept", "application/json")
+                .get();
+        Assertions.assertEquals(200, response.getStatus(), "openid status code is not 200");
+    }
+
+    @Test
     void testGetAllCoffeeMachinesAndCheckAvailabilityAfterAddOrders() {
         Client client = ClientBuilder.newClient();
 
-        // Get coffee machines from testDb. Initially Hulk coffee machine have 6 min velocity.
+        // get coffee machines from testDb. Initially Hulk coffee machine have 6 min velocity.
         JsonObject jsonObject = client
                 .target(getConnectionString("/machines"))
                 .request()
@@ -85,7 +97,7 @@ class OrderIntegrationTest {
                 .header("Authorization", "Bearer user1")
                 .post(Entity.entity("{\"coffee\" : \"Latte\", \"machine\" : \"Hulk\"}", MediaType.APPLICATION_JSON), JsonObject.class);
 
-        //check availability period of Hulk coffee machine, as velocity is 6 - should be (6-1)+6 (-1min because machine already started)
+        // check availability period of Hulk coffee machine, as velocity is 6 - should be (6-1)+6 (-1min because machine already started)
         jsonObject = client
                 .target(getConnectionString("/machines"))
                 .request()
@@ -133,7 +145,8 @@ class OrderIntegrationTest {
                 .target(getConnectionString("/orders"))
                 .request()
                 .header("Authorization", "Bearer user1")
-                .post(Entity.entity("{\"coffee\" : \"Latte\", \"machine\" : \"Lion\"}", MediaType.APPLICATION_JSON), JsonObject.class);
+                .post(Entity.entity("{\"coffee\" : \"Latte\", \"machine\" : \"Lion\"}",
+                        MediaType.APPLICATION_JSON), JsonObject.class);
         Assertions.assertNotNull(jsonObject);
         Assertions.assertNotNull(jsonObject.getJsonString("message"));
         Assertions.assertNotNull(jsonObject.getJsonString("payload"));
@@ -179,7 +192,8 @@ class OrderIntegrationTest {
                 .target(getConnectionString("/orders"))
                 .request()
                 .header("Authorization", "Bearer user1")
-                .post(Entity.entity("{\"coffee\" : \"Latte\", \"machine\" : \"Lion\"}", MediaType.APPLICATION_JSON), JsonObject.class);
+                .post(Entity.entity("{\"coffee\" : \"Latte\", \"machine\" : \"Lion\"}",
+                        MediaType.APPLICATION_JSON), JsonObject.class);
         Assertions.assertNotNull(jsonObject);
         Assertions.assertNotNull(jsonObject.getJsonString("message"));
         Assertions.assertNotNull(jsonObject.getJsonString("payload"));
@@ -191,7 +205,8 @@ class OrderIntegrationTest {
                 .target(getConnectionString("/orders"))
                 .request()
                 .header("Authorization", "Bearer user2")
-                .post(Entity.entity("{\"coffee\" : \"Latte\", \"machine\" : \"Lion\"}", MediaType.APPLICATION_JSON), JsonObject.class);
+                .post(Entity.entity("{\"coffee\" : \"Latte\", \"machine\" : \"Lion\"}",
+                        MediaType.APPLICATION_JSON), JsonObject.class);
         Assertions.assertNotNull(jsonObject);
         Assertions.assertNotNull(jsonObject.getJsonString("message"));
         Assertions.assertNotNull(jsonObject.getJsonString("payload"));

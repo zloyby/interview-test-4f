@@ -9,9 +9,9 @@
         <class>by.zloy.model.Order</class>
         <class>by.zloy.model.Machine</class>
         <properties>
-            <property name="eclipselink.create-ddl-jdbc-file-name" value="target/coffee-ddl-generation.jdbc"/>
-            <property name="eclipselink.ddl-generation" value="create-tables"/>
-            <property name="eclipselink.ddl-generation.output-mode" value="sql-script"/>
+            <!--<property name="eclipselink.create-ddl-jdbc-file-name" value="target/coffee-ddl-generation.jdbc"/>-->
+            <!--<property name="eclipselink.ddl-generation" value="create-tables"/>-->
+            <!--<property name="eclipselink.ddl-generation.output-mode" value="sql-script"/>-->
             <property name="eclipselink.deploy-on-startup" value="true"/>
             <property name="eclipselink.jdbc.native-sql" value="true"/>
             <property name="eclipselink.logging.logger" value="JavaLogger"/>
