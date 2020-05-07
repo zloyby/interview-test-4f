@@ -36,14 +36,15 @@ public class OrderProvider {
     private EntityManager entityManager;
 
     @Transactional(Transactional.TxType.REQUIRED)
-    public Order getOrder(String orderId) {
-        final TypedQuery<Order> query = this.entityManager.createNamedQuery("Orders.findById", Order.class);
+    public Order getOrder(String orderId, String authHeader) {
+        final TypedQuery<Order> query = this.entityManager.createNamedQuery("Orders.findByIdAndToken", Order.class);
         query.setParameter("orderId", orderId);
+        query.setParameter("token", authHeader);
         return query.getSingleResult();
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
-    public String createOrder(String coffeeName, String machineId) {
+    public String createOrder(String coffeeName, String machineId, String authHeader) {
         final TypedQuery<Machine> query = this.entityManager.createNamedQuery("Machines.findById", Machine.class);
         query.setParameter("machineId", machineId);
         Machine machine = query.getSingleResult();
@@ -55,7 +56,8 @@ public class OrderProvider {
                 UUID.randomUUID().toString(),
                 Coffee.valueOf(coffeeName),
                 availability,
-                machine);
+                machine,
+                authHeader);
         this.entityManager.persist(order);
         return order.getOrderId();
     }

@@ -1,6 +1,7 @@
 CREATE TABLE IF NOT EXISTS ORDERS
 (
     ORDER_ID        VARCHAR(64)              NOT NULL PRIMARY KEY,
+    TOKEN           VARCHAR(64)              NOT NULL,
     MACHINE_ID      VARCHAR(64)              NOT NULL,
     COFFEE          INTEGER                  NOT NULL,
     READY_DATE_TIME TIMESTAMP WITH TIME ZONE NOT NULL

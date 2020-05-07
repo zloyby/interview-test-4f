@@ -60,10 +60,10 @@ class OrderIntegrationTest {
     }
 
     @Test
-    void testGetAllCoffeeMachinesAndCheckAvailabilityAfterAddOrder() {
+    void testGetAllCoffeeMachinesAndCheckAvailabilityAfterAddOrders() {
         Client client = ClientBuilder.newClient();
 
-        // Initially Hulk have 6 min velocity
+        // Get coffee machines from testDb. Initially Hulk coffee machine have 6 min velocity.
         JsonObject jsonObject = client
                 .target(getConnectionString("/machines"))
                 .request()
@@ -73,18 +73,19 @@ class OrderIntegrationTest {
         Assertions.assertNotNull(jsonObject.getJsonArray("payload"));
         JsonArray payload = jsonObject.getJsonArray("payload");
         Assertions.assertEquals(2, payload.size());
-        int readyMin = ("Hulk".equals(payload.getJsonObject(0).getString("Coffee machine")))
+        int availableMin = ("Hulk".equals(payload.getJsonObject(0).getString("Coffee machine")))
                 ? payload.getJsonObject(0).getInt("You coffee will be ready in (min)")
                 : payload.getJsonObject(1).getInt("You coffee will be ready in (min)");
-        Assertions.assertEquals(6, readyMin);
+        Assertions.assertEquals(6, availableMin);
 
-        // make new order to Hulk
+        // make new order on Hulk coffee machine
         client
                 .target(getConnectionString("/orders"))
                 .request()
+                .header("Authorization", "Bearer user1")
                 .post(Entity.entity("{\"coffee\" : \"Latte\", \"machine\" : \"Hulk\"}", MediaType.APPLICATION_JSON), JsonObject.class);
 
-        //check ready time, as velocity is 6 - should be (6-1)+6, -1 because machine already started to make coffee
+        //check availability period of Hulk coffee machine, as velocity is 6 - should be (6-1)+6 (-1min because machine already started)
         jsonObject = client
                 .target(getConnectionString("/machines"))
                 .request()
@@ -94,31 +95,33 @@ class OrderIntegrationTest {
         Assertions.assertNotNull(jsonObject.getJsonArray("payload"));
         payload = jsonObject.getJsonArray("payload");
         Assertions.assertEquals(2, payload.size());
-        readyMin = ("Hulk".equals(payload.getJsonObject(0).getString("Coffee machine")))
+        availableMin = ("Hulk".equals(payload.getJsonObject(0).getString("Coffee machine")))
                 ? payload.getJsonObject(0).getInt("You coffee will be ready in (min)")
                 : payload.getJsonObject(1).getInt("You coffee will be ready in (min)");
-        Assertions.assertEquals(11, readyMin);
+        Assertions.assertEquals(11, availableMin);
 
-        // make another order to Hulk
+        // another user make an order on Hulk coffee machine
         client
                 .target(getConnectionString("/orders"))
                 .request()
+                .header("Authorization", "Bearer user2")
                 .post(Entity.entity("{\"coffee\" : \"Espresso\", \"machine\" : \"Hulk\"}", MediaType.APPLICATION_JSON), JsonObject.class);
 
-        // check ready time, as velocity is 6 - should be (6-1)+6+6
+        // re-check availability period of Hulk coffee machine, should be (6-1)+6+6
         jsonObject = client
                 .target(getConnectionString("/machines"))
                 .request()
+                .header("Authorization", "Bearer user2")
                 .get(JsonObject.class);
         Assertions.assertNotNull(jsonObject);
         Assertions.assertNotNull(jsonObject.getJsonString("message"));
         Assertions.assertNotNull(jsonObject.getJsonArray("payload"));
         payload = jsonObject.getJsonArray("payload");
         Assertions.assertEquals(2, payload.size());
-        readyMin = ("Hulk".equals(payload.getJsonObject(0).getString("Coffee machine")))
+        availableMin = ("Hulk".equals(payload.getJsonObject(0).getString("Coffee machine")))
                 ? payload.getJsonObject(0).getInt("You coffee will be ready in (min)")
                 : payload.getJsonObject(1).getInt("You coffee will be ready in (min)");
-        Assertions.assertEquals(17, readyMin);
+        Assertions.assertEquals(17, availableMin);
     }
 
     @Test
@@ -129,6 +132,7 @@ class OrderIntegrationTest {
         JsonObject jsonObject = client
                 .target(getConnectionString("/orders"))
                 .request()
+                .header("Authorization", "Bearer user1")
                 .post(Entity.entity("{\"coffee\" : \"Latte\", \"machine\" : \"Lion\"}", MediaType.APPLICATION_JSON), JsonObject.class);
         Assertions.assertNotNull(jsonObject);
         Assertions.assertNotNull(jsonObject.getJsonString("message"));
@@ -140,6 +144,7 @@ class OrderIntegrationTest {
         jsonObject = client
                 .target(getConnectionString("/orders/" + id))
                 .request()
+                .header("Authorization", "Bearer user1")
                 .get(JsonObject.class);
         Assertions.assertNotNull(jsonObject);
         Assertions.assertNotNull(jsonObject.getJsonString("message"));
@@ -154,6 +159,7 @@ class OrderIntegrationTest {
         jsonObject = client
                 .target(getConnectionString("/orders/" + id))
                 .request()
+                .header("Authorization", "Bearer user1")
                 .get(JsonObject.class);
         Assertions.assertNotNull(jsonObject);
         Assertions.assertNotNull(jsonObject.getJsonString("message"));
@@ -162,7 +168,71 @@ class OrderIntegrationTest {
         parse = OffsetDateTime.parse(dateTime);
         Assertions.assertTrue(parse.compareTo(OffsetDateTime.now()) < 0,
                 "Ready dateTime is more than current dateTime, even after 1 min sleep");
+    }
 
+    @Test
+    void testCreateOrderByDifferentUsers() {
+        Client client = ClientBuilder.newClient();
+
+        // make new order#1
+        JsonObject jsonObject = client
+                .target(getConnectionString("/orders"))
+                .request()
+                .header("Authorization", "Bearer user1")
+                .post(Entity.entity("{\"coffee\" : \"Latte\", \"machine\" : \"Lion\"}", MediaType.APPLICATION_JSON), JsonObject.class);
+        Assertions.assertNotNull(jsonObject);
+        Assertions.assertNotNull(jsonObject.getJsonString("message"));
+        Assertions.assertNotNull(jsonObject.getJsonString("payload"));
+        String id1 = jsonObject.getJsonString("payload").getString();
+        Assertions.assertTrue(validUUID(id1), "order ID is not UUID");
+
+        // make new order#2
+        jsonObject = client
+                .target(getConnectionString("/orders"))
+                .request()
+                .header("Authorization", "Bearer user2")
+                .post(Entity.entity("{\"coffee\" : \"Latte\", \"machine\" : \"Lion\"}", MediaType.APPLICATION_JSON), JsonObject.class);
+        Assertions.assertNotNull(jsonObject);
+        Assertions.assertNotNull(jsonObject.getJsonString("message"));
+        Assertions.assertNotNull(jsonObject.getJsonString("payload"));
+        String id2 = jsonObject.getJsonString("payload").getString();
+        Assertions.assertTrue(validUUID(id2), "order ID is not UUID");
+
+        // check order#1 by first user
+        jsonObject = client
+                .target(getConnectionString("/orders/" + id1))
+                .request()
+                .header("Authorization", "Bearer user1")
+                .get(JsonObject.class);
+        Assertions.assertNotNull(jsonObject);
+        Assertions.assertNotNull(jsonObject.getJsonString("message"));
+        Assertions.assertNotNull(jsonObject.getJsonString("payload"));
+        String dateTime = jsonObject.getJsonString("payload").getString();
+        OffsetDateTime parse = OffsetDateTime.parse(dateTime);
+        Assertions.assertTrue(parse.compareTo(OffsetDateTime.now()) > 0,
+                "Ready dateTime is less than current dateTime");
+
+        // check same order#1 by second user, should be 404
+        Response response = client
+                .target(getConnectionString("/orders/" + id1))
+                .request()
+                .header("Authorization", "Bearer user2")
+                .get();
+        Assertions.assertEquals(404, response.getStatus(), "metrics status code is not 404");
+
+        // check order#2 by second user
+        jsonObject = client
+                .target(getConnectionString("/orders/" + id2))
+                .request()
+                .header("Authorization", "Bearer user2")
+                .get(JsonObject.class);
+        Assertions.assertNotNull(jsonObject);
+        Assertions.assertNotNull(jsonObject.getJsonString("message"));
+        Assertions.assertNotNull(jsonObject.getJsonString("payload"));
+        dateTime = jsonObject.getJsonString("payload").getString();
+        parse = OffsetDateTime.parse(dateTime);
+        Assertions.assertTrue(parse.compareTo(OffsetDateTime.now()) > 0,
+                "Ready dateTime is less than current dateTime");
     }
 
     @AfterAll

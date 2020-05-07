@@ -4,7 +4,7 @@ Would like to investigate some new frameworks used in 'OR' company:
 * Helidon
 * MicroProfile (Config, Health, Metrics, Fault Tolerance)
 * EclipseLink (JTA, JPA)
-* JWT Auth with Helidon security context 
+* Helidon Security with providers (JWT, Header) 
 * Docker multi-stage builds and Kubernetes cluster
 
 ### Task 
@@ -25,7 +25,7 @@ User should be able to request a cup of coffee (cappuccino, latte, espresso) and
 ##### OpenAPI
 
 ```
-curl -s -X GET http://localhost:8080/openapi
+curl -H 'Accept: application/json' -X GET http://localhost:8080/openapi
 ```
 
 ##### Health and metrics

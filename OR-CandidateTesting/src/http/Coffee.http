@@ -1,4 +1,4 @@
-### GET
+### GET coffee machines
 GET http://{{host}}:{{port}}/machines
 Accept: application/json
 
@@ -16,6 +16,7 @@ client.test("Response content-type is json", function() {
 POST http://{{host}}:{{port}}/orders
 Accept: application/json
 Content-Type: application/json
+Authorization: Bearer user1
 
 {
   "coffee": "Cappuccino",
@@ -35,10 +36,7 @@ client.test("Response content-type is json", function() {
 ### GET
 GET http://{{host}}:{{port}}/orders/9d895922-9592-4c59-929b-76c6853d4de8
 Accept: application/json
-
-### GET
-GET http://{{host}}:{{port}}/orders/01471672-a8e4-45d7-b006-a2bf1ecb24bc
-Accept: application/json
+Authorization: Bearer user1
 
 > {%
 client.test("Request executed successfully", function() {
@@ -53,9 +51,20 @@ client.test("Response content-type is json", function() {
 ### GET with unknown ID
 GET http://{{host}}:{{port}}/orders/00000-xxxx-zzzz-123123123123
 Accept: application/json
+Authorization: Bearer user1
 
 > {%
 client.test("Request executed successfully", function() {
   client.assert(response.status === 404, "Response status is not 404");
+});
+%}
+
+### GET without Authorization header
+GET http://{{host}}:{{port}}/orders/9d895922-9592-4c59-929b-76c6853d4de8
+Accept: application/json
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 401, "Response status is not 401");
 });
 %}

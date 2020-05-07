@@ -1,0 +1,10 @@
+security:
+  providers:
+    - header-atn:
+        # Token extraction (and propagation)
+        # No default for token extraction
+        atn-token:
+          # name of header to extract token from (see providers-common module for all options)
+          header: "Authorization"
+          # or do not specify - then the whole header is considered to be the token value
+          # prefix: "Bearer "

@@ -69,6 +69,7 @@ public class OrderResource {
                     description = "Returns available coffee machines",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = JsonResponse.class))),
             @APIResponse(name = "invalid request", responseCode = "400"),
+            @APIResponse(name = "unauthorized", responseCode = "401"),
             @APIResponse(name = "not found", responseCode = "404"),
             @APIResponse(name = "internal error", responseCode = "500")
     })
@@ -95,13 +96,15 @@ public class OrderResource {
                     description = "Order successfully created",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = JsonResponse.class))),
             @APIResponse(name = "invalid request", responseCode = "400"),
+            @APIResponse(name = "unauthorized", responseCode = "401"),
             @APIResponse(name = "not found", responseCode = "404"),
             @APIResponse(name = "internal error", responseCode = "500")
     })
-    public Response createOrder(JsonObject jsonObject) {
+    @io.helidon.security.annotations.Authenticated
+    public Response createOrder(@HeaderParam("Authorization") String authHeader, JsonObject jsonObject) {
         String coffeeName = jsonObject.getString("coffee");
         String machineId = jsonObject.getString("machine");
-        String id = orderProvider.createOrder(coffeeName, machineId);
+        String id = orderProvider.createOrder(coffeeName, machineId, authHeader);
 
         String msg = String.format("Create '%s' order with order ID '%s'.", coffeeName, id);
         return Response.ok().entity(json(msg, id)).build();
@@ -117,16 +120,23 @@ public class OrderResource {
                     description = "Returns order status",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = JsonResponse.class))),
             @APIResponse(name = "invalid request", responseCode = "400"),
+            @APIResponse(name = "unauthorized", responseCode = "401"),
             @APIResponse(name = "not found", responseCode = "404"),
             @APIResponse(name = "internal error", responseCode = "500")
     })
-    public Response getOrder(@PathParam("orderId") String orderId) {
-        Order order = orderProvider.getOrder(orderId);
+    @io.helidon.security.annotations.Authenticated
+    public Response getOrder(@HeaderParam("Authorization") String authHeader, @PathParam("orderId") String orderId) {
+        Order order = orderProvider.getOrder(orderId, authHeader);
 
-        String msg = (order.getReadyDateTime().compareTo(OffsetDateTime.now()) > 0)
-                ? String.format("You '%s' will be ready at %s.", order.getCoffee(), order.getReadyDateTime().format(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)))
+        OffsetDateTime readyDateTime = order.getReadyDateTime();
+        String msg = (readyDateTime.compareTo(OffsetDateTime.now()) > 0)
+                ? String.format("You '%s' will be ready at %s.", order.getCoffee(), getLocalTime(readyDateTime))
                 : String.format("You '%s' is ready.", order.getCoffee());
-        return Response.ok().entity(json(msg, order.getReadyDateTime().toString())).build();
+        return Response.ok().entity(json(msg, readyDateTime.toString())).build();
+    }
+
+    private String getLocalTime(OffsetDateTime readyDateTime) {
+        return readyDateTime.format(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT));
     }
 
     private JsonObject json(String msg, String data) {
@@ -152,6 +162,7 @@ public class OrderResource {
         return duration.toMinutes() + minutesToMakeCoffee;
     }
 
+    @SuppressWarnings("unused")
     private static class JsonResponse {
 
         private String message;

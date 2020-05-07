@@ -7,7 +7,7 @@ import java.time.OffsetDateTime;
 @Access(value = AccessType.FIELD)
 @Entity(name = "Orders")
 @Table(name = "ORDERS")
-@NamedQuery(name = "Orders.findById", query = "SELECT o FROM Orders o WHERE o.orderId = :orderId")
+@NamedQuery(name = "Orders.findByIdAndToken", query = "SELECT o FROM Orders o WHERE o.orderId = :orderId AND o.token = :token")
 public class Order implements Serializable {
 
     @Id
@@ -26,17 +26,22 @@ public class Order implements Serializable {
     @JoinColumn(name = "MACHINE_ID", referencedColumnName = "MACHINE_ID")
     private Machine machine;
 
+    @Basic(optional = false)
+    @Column(name = "TOKEN", nullable = false)
+    private String token;
+
     @Deprecated
     protected Order() {
         super();
     }
 
-    public Order(String orderId, Coffee coffee, OffsetDateTime readyDateTime, Machine machine) {
+    public Order(String orderId, Coffee coffee, OffsetDateTime readyDateTime, Machine machine, String token) {
         super();
         this.orderId = orderId;
         this.coffee = coffee;
         this.readyDateTime = readyDateTime;
         this.machine = machine;
+        this.token = token;
     }
 
     public String getOrderId() {
@@ -53,5 +58,9 @@ public class Order implements Serializable {
 
     public Machine getMachine() {
         return machine;
+    }
+
+    public String getToken() {
+        return token;
     }
 }
