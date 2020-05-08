@@ -39,7 +39,7 @@ class OrderIntegrationTest {
 
     @BeforeAll
     public static void startTheServer() {
-        server = Main.startServer();
+        server = MainApplication.startServer();
     }
 
     @Test
@@ -64,11 +64,11 @@ class OrderIntegrationTest {
         Client client = ClientBuilder.newClient();
 
         Response response = client
-                .target(getConnectionString("/openid"))
+                .target(getConnectionString("/openapi"))
                 .request()
                 .header("Accept", "application/json")
                 .get();
-        Assertions.assertEquals(200, response.getStatus(), "openid status code is not 200");
+        Assertions.assertEquals(200, response.getStatus(), "openapi status code is not 200");
     }
 
     @Test

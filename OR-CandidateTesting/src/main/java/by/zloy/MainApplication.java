@@ -25,12 +25,12 @@ import java.util.logging.LogManager;
 /**
  * The application main class.
  */
-public final class Main {
+public final class MainApplication {
 
     /**
      * Cannot be instantiated.
      */
-    private Main() {
+    private MainApplication() {
     }
 
     /**
@@ -60,7 +60,7 @@ public final class Main {
      * Configure logging from logging.properties file.
      */
     private static void setupLogging() throws IOException {
-        try (InputStream is = Main.class.getResourceAsStream("/logging.properties")) {
+        try (InputStream is = MainApplication.class.getResourceAsStream("/logging.properties")) {
             LogManager.getLogManager().readConfiguration(is);
         }
     }

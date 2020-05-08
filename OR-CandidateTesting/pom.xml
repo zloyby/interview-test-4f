@@ -24,7 +24,7 @@
     <parent>
         <groupId>io.helidon.applications</groupId>
         <artifactId>helidon-mp</artifactId>
-        <version>2.0.0-M2</version>
+        <version>1.4.4</version>
         <relativePath/>
     </parent>
     <groupId>by.zloy</groupId>
@@ -32,7 +32,7 @@
     <name>${project.artifactId}</name>
 
     <properties>
-        <mainClass>by.zloy.Main</mainClass>
+        <mainClass>by.zloy.MainApplication</mainClass>
     </properties>
 
     <dependencyManagement>
@@ -41,7 +41,7 @@
             <dependency>
                 <groupId>io.helidon</groupId>
                 <artifactId>helidon-bom</artifactId>
-                <version>2.0.0-M2</version>
+                <version>1.4.4</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -73,6 +73,33 @@
         <dependency>
             <groupId>io.helidon.microprofile.bundles</groupId>
             <artifactId>helidon-microprofile</artifactId>
+        </dependency>
+
+        <!-- Override versions of eclipse.persistence.* to 2.7.5+ due bug https://github.com/eclipse-ee4j/eclipselink/pull/555-->
+        <dependency>
+            <groupId>org.eclipse.persistence</groupId>
+            <artifactId>org.eclipse.persistence.antlr</artifactId>
+            <version>2.7.7</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.persistence</groupId>
+            <artifactId>org.eclipse.persistence.asm</artifactId>
+            <version>2.7.7</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.persistence</groupId>
+            <artifactId>org.eclipse.persistence.core</artifactId>
+            <version>2.7.7</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.persistence</groupId>
+            <artifactId>org.eclipse.persistence.jpa.jpql</artifactId>
+            <version>2.7.7</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.persistence</groupId>
+            <artifactId>org.eclipse.persistence.jpa</artifactId>
+            <version>2.7.7</version>
         </dependency>
 
         <dependency>
@@ -200,6 +227,21 @@
         <testResources/>
 
         <plugins>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <!-- for jdk 1.8 : -->
+                    <!--                    <source>1.8</source>-->
+                    <!--                    <target>1.8</target>-->
+                    <!-- for jdk 11 : -->
+                    <!--                    <release>11</release>-->
+                    <!-- for jdk 13 : -->
+                    <release>13</release>
+                </configuration>
+            </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

@@ -20,6 +20,7 @@ import by.zloy.resource.CoffeeResource;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.ws.rs.core.Application;
+import java.util.HashSet;
 import java.util.Set;
 
 @ApplicationScoped
@@ -29,7 +30,10 @@ public class CoffeeApplication extends Application {
 
     public CoffeeApplication() {
         super();
-        this.classes = Set.of(CoffeeResource.class, JPAExceptionMapper.class);
+        Set<Class<?>> set = new HashSet<>();
+        set.add(CoffeeResource.class);
+        set.add(JPAExceptionMapper.class);
+        this.classes = set;
     }
 
     @Override
