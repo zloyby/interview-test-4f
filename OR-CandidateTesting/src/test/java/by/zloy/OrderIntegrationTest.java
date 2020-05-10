@@ -60,7 +60,7 @@ class OrderIntegrationTest {
     }
 
     @Test
-    void testOpenID() {
+    void testOpenAPI() {
         Client client = ClientBuilder.newClient();
 
         Response response = client
